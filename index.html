@@ -139,22 +139,30 @@
         <div id="search-results" class="donor-grid"></div>
         <p id="no-results" class="no-results" style="display:none;" data-i18n="no_results">No donors found. Try changing your filters.</p>
 
-        <div class="emergency-box">
+        <div class="alert-box" style="padding:1.2em;margin-top:1.5em;border-radius:8px;background:#fef2f2;border:1px solid #e2b1b1;">
           <h3 data-i18n="emergency_title">🚨 Need Blood Urgently?</h3>
           <p data-i18n="emergency_sub">Send an alert to all donors in a district</p>
           <form class="alert-form" onsubmit="sendEmergencyAlert(event)">
-            <select id="alert-district" required>
-              <option value="" data-i18n="opt_select_dist">Select District</option>
-            </select>
-            <select id="alert-blood" required>
-              <option value="" data-i18n="opt_all_blood">Select Blood Type</option>
-              <option value="A">Type A</option>
-              <option value="B">Type B</option>
-              <option value="AB">Type AB</option>
-            </select>
-            <div class="form-group">
-              <label data-i18n="label_emergency_phone">Seeker Phone Number</label>
-              <input type="tel" id="alert-phone" placeholder="01XXX-XXXXXX" required />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="alert-district" data-i18n="label_district">District</label>
+                <select id="alert-district" required>
+                  <option value="" data-i18n="opt_select_dist">Select District</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="alert-blood" data-i18n="label_blood">Blood Type</label>
+                <select id="alert-blood" required>
+                  <option value="" data-i18n="opt_all_blood">All Types</option>
+                  <option value="A">Type A</option>
+                  <option value="B">Type B</option>
+                  <option value="AB">Type AB</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="alert-phone" data-i18n="label_emergency_phone">Seeker Phone Number</label>
+                <input type="tel" id="alert-phone" placeholder="01XXX-XXXXXX" required />
+              </div>
             </div>
             <button type="submit" class="btn btn-danger pulse" data-i18n="alert_btn">Send Emergency Alert</button>
           </form>
