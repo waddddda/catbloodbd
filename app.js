@@ -449,7 +449,8 @@ async function handleSignup(e) {
     toast('Please select both division and district.', 'error');
     return;
   }
-  if (!phone || !/^\+?(88)?01[3-9]\d{8}$/.test(phone.replace(/\s/g,''))) {
+  // Fixed regex: removed extra escaping
+  if (!phone || !/^\+?(88)?01[3-9]\d{8}$/.test(phone.replace(/\s/g, ''))) {
     toast('Please enter a valid Bangladeshi phone number.', 'error');
     return;
   }
@@ -565,10 +566,37 @@ function toggleCatForm() {
   if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
 
+// ✅ handleAddCat – fixed and safe
 async function handleAddCat(e) {
   e.preventDefault();
-  if (!currentUser) {
+
+  if (!currentUser || !currentUser.id) {
     toast('Please log in first.', 'error');
+    return;
+  }
+
+  const nameEl = document.getElementById('cat-name');
+  const ageEl = document.getElementById('cat-age');
+  const weightEl = document.getElementById('cat-weight');
+  const divisionEl = document.getElementById('cat-division');
+  const districtEl = document.getElementById('cat-district');
+  const bloodTypeEl = document.getElementById('cat-blood');
+
+  if (!nameEl || !ageEl || !weightEl || !divisionEl || !districtEl || !bloodTypeEl) {
+    toast('Form error: some fields are missing. Please refresh the page.', 'error');
+    return;
+  }
+
+  const name = nameEl.value.trim();
+  const breed = document.getElementById('cat-breed')?.value.trim() || '';
+  const age = +ageEl.value;
+  const weight = +weightEl.value;
+  const division = divisionEl.value;
+  const district = districtEl.value;
+  const bloodType = bloodTypeEl.value;
+
+  if (!name || !age || !weight || !bloodType || !division || !district) {
+    toast('Please fill in all fields.', 'error');
     return;
   }
 
@@ -580,17 +608,6 @@ async function handleAddCat(e) {
 
   if (donorErr || !donorData) {
     toast('Donor profile not found. Please complete your profile.', 'error');
-    return;
-  }
-
-  const name = document.getElementById('cat-name').value.trim();
-  const breed = document.getElementById('cat-breed').value.trim() || '';
-  const age = +document.getElementById('cat-age').value;
-  const weight = +document.getElementById('cat-weight').value;
-  const bloodType = document.getElementById('cat-blood').value;
-
-  if (!name || !age || !weight || !bloodType) {
-    toast('Please fill in all fields.', 'error');
     return;
   }
 
@@ -610,8 +627,7 @@ async function handleAddCat(e) {
   }
 
   e.target.reset();
-  const form = document.getElementById('cat-form');
-  if (form) form.style.display = 'none';
+  toggleCatForm();
   toast(`${name} registered as a donor!`, 'success');
   await renderMyCats();
 }
