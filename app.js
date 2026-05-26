@@ -161,6 +161,9 @@ async function initAuth() {
   sb.auth.onAuthStateChange((_event, session) => {
     currentUser = session?.user || null;
     updateAuthNav();
+    if (currentUser) {
+      requestNotificationPermission();
+    }
   });
   updateAuthNav();
 }
@@ -382,7 +385,60 @@ function renderDonorCards(cats, containerId) {
   `).join('');
 }
 
-// ---------- Emergency Alert (fixed) ----------
+// ---------- Notification System ----------
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    console.log('Notifications not supported');
+    return false;
+  }
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') return false;
+  
+  const permission = await Notification.requestPermission();
+  return permission === 'granted';
+}
+
+async function notifyDonors(district, bloodType, seekerPhone) {
+  const { data: donors } = await sb.from('donors')
+    .select('phone_number')
+    .eq('district', district);
+  
+  if (!donors || donors.length === 0) {
+    console.log('No donors found in this district');
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    const notification = new Notification('🚨 Emergency Blood Alert!', {
+      body: `Type ${bloodType} needed in ${district}. Seeker: ${seekerPhone}`,
+      icon: 'https://cdn-icons-png.flaticon.com/512/853/853766.png',
+      badge: 'https://cdn-icons-png.flaticon.com/512/1067/1067357.png',
+      tag: `emergency-${district}-${bloodType}`,
+      requireInteraction: true,
+      actions: [
+        { action: 'view', title: 'View Dashboard' },
+        { action: 'call', title: 'Call Seeker' }
+      ]
+    });
+
+    notification.onclick = (e) => {
+      e.preventDefault();
+      window.focus();
+      location.hash = 'dashboard';
+      notification.close();
+    };
+
+    notification.onaction = async (e) => {
+      if (e.action.action === 'call') {
+        window.open(`tel:${seekerPhone}`, '_blank');
+      } else if (e.action.action === 'view') {
+        location.hash = 'dashboard';
+      }
+    };
+  }
+}
+
+// ---------- Emergency Alert (with notifications) ----------
 async function sendEmergencyAlert(e) {
   e.preventDefault();
 
@@ -417,6 +473,8 @@ async function sendEmergencyAlert(e) {
     toast('Failed to send alert: ' + error.message, 'error');
     return;
   }
+
+  await notifyDonors(district, blood, phone);
 
   const confirm = document.getElementById('alert-confirm');
   if (confirm) {
@@ -546,7 +604,6 @@ async function renderDashboard() {
   await renderDashAlerts();
 }
 
-// ✅ Updated renderMyCats – shows cat's own division & district
 async function renderMyCats() {
   const { data, error: donorErr } = await sb.from('donors')
     .select('id')
@@ -598,7 +655,6 @@ function toggleCatForm() {
   if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
 
-// ✅ Updated handleAddCat – saves cat's division & district from form, not donor profile
 async function handleAddCat(e) {
   e.preventDefault();
 
@@ -677,7 +733,6 @@ async function deleteCat(id) {
   await renderMyCats();
 }
 
-// ✅ Updated renderDashAlerts – Professional emergency alert cards
 async function renderDashAlerts() {
   const container = document.getElementById('dash-alerts');
   const noAlerts = document.getElementById('no-alerts');
