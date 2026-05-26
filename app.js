@@ -86,7 +86,7 @@ const STRINGS = {
     search_title:'রক্তদাতা খুঁজুন', search_subtitle:'অবস্থান এবং রক্তের ধরন দিয়ে খুঁজুন — সাথে সাথে ফোন নম্বর পান',
     label_division:'বিভাগ', label_district:'জেলা', label_blood:'রক্তের ধরন',
     opt_all_div:'সব বিভাগ', opt_all_dist:'সব জেলা', opt_all_blood:'সব ধরন',
-    btn_search:'খুঁজুন', no_results:'কোনো দাতা পাওয়া যায়নি। ফিল্টার পরিবর্তন করে দেখুন।',
+    btn_search:'খুঁজুন', no_results:'কোনো দাতা পাওয়া যায়নি। ফিল্টর পরিবর্তন করে দেখুন।',
     emergency_title:'🚨 জরুরি রক্ত দরকার?', emergency_sub:'একটি জেলার সব দাতাকে সতর্কতা পাঠান',
     alert_btn:'জরুরি সতর্কতা পাঠান',
     guide_title:'বিড়ালের রক্তের ধরন গাইড', guide_subtitle:'বিড়ালের রক্তের সামঞ্জস্যতা বোঝা',
@@ -178,6 +178,36 @@ function updateAuthNav() {
   }
 }
 
+// ---------- Helper: ensure donor profile exists ----------
+async function ensureDonorProfile(userId, email) {
+  const { data, error } = await sb.from('donors')
+    .select('id')
+    .eq('user_id', userId)
+    .single();
+
+  if (!error && data) return { data, error: null };
+
+  // Insert default donor if missing
+  const { error: insertError } = await sb.from('donors').insert({
+    user_id: userId,
+    name: email.split('@')[0],
+    phone_number: null,
+    division: null,
+    district: null
+  });
+
+  if (insertError && insertError.code !== '23505') {
+    return { data: null, error: insertError };
+  }
+
+  const { data: newDonor, error: readErr } = await sb.from('donors')
+    .select('id')
+    .eq('user_id', userId)
+    .single();
+
+  return { data: newDonor, error: readErr };
+}
+
 // ---------- Router ----------
 function navigateTo(viewId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -246,15 +276,19 @@ function populateAlertDistricts() {
   });
 }
 
-function updateDistricts() {
-  const div = document.getElementById('search-division').value;
-  const sel = document.getElementById('search-district');
-  sel.innerHTML = `<option value="">${t('opt_all_dist')}</option>`;
+function updateDistricts(forId = 'search-division', toId = 'search-district') {
+  const divSel = document.getElementById(forId);
+  const distSel = document.getElementById(toId);
+  if (!divSel || !distSel) return;
+
+  const div = divSel.value;
+  distSel.innerHTML = `<option value="">${t('opt_select_dist')}</option>`;
   if (div && BD_LOCATIONS[div]) {
     BD_LOCATIONS[div].forEach(d => {
       const opt = document.createElement('option');
-      opt.value = d; opt.textContent = d;
-      sel.appendChild(opt);
+      opt.value = d;
+      opt.textContent = d;
+      distSel.appendChild(opt);
     });
   }
 }
@@ -299,7 +333,9 @@ async function handleSearch(e) {
   const district = document.getElementById('search-district').value;
   const blood = document.getElementById('search-blood').value;
 
-  let query = sb.from('cats').select('*, donors(phone_number, division, district)').eq('availability', true);
+  let query = sb.from('cats')
+    .select('*, donors(phone_number, division, district)')
+    .eq('availability', true);
   if (blood) query = query.eq('blood_type', blood);
 
   const { data, error } = await query;
@@ -369,12 +405,28 @@ async function sendEmergencyAlert(e) {
 // ---------- Auth ----------
 async function handleLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('login-email').value.trim();
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
   const password = document.getElementById('login-password').value;
 
+  if (!email || !password) {
+    toast('Please enter email and password.', 'error');
+    return;
+  }
+
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) { toast(error.message, 'error'); return; }
+  if (error) {
+    toast('Login failed: ' + error.message, 'error');
+    return;
+  }
+
   currentUser = data.user;
+
+  // Ensure donor profile exists
+  const { error: donorErr } = await ensureDonorProfile(currentUser.id, email);
+  if (donorErr) {
+    toast('Profile issue: ' + donorErr.message, 'error');
+  }
+
   updateAuthNav();
   toast('Welcome back!', 'success');
   location.hash = 'dashboard';
@@ -387,21 +439,62 @@ async function handleSignup(e) {
   const password = document.getElementById('signup-password').value;
   const phone = document.getElementById('signup-phone').value.trim();
   const division = document.getElementById('signup-division').value;
+  const district = document.getElementById('signup-district').value;
 
-  if (!division) { toast('Please select your division.', 'error'); return; }
-  if (password.length < 6) { toast('Password must be at least 6 characters.', 'error'); return; }
+  if (!name || !email || !password || !phone) {
+    toast('Please fill all required fields.', 'error');
+    return;
+  }
+  if (!division || !district) {
+    toast('Please select both division and district.', 'error');
+    return;
+  }
+  if (!phone || !/^\+?(88)?01[3-9]\d{8}$/.test(phone.replace(/\s/g,''))) {
+    toast('Please enter a valid Bangladeshi phone number.', 'error');
+    return;
+  }
+  if (password.length < 6) {
+    toast('Password must be at least 6 characters.', 'error');
+    return;
+  }
 
-  const { data, error } = await sb.auth.signUp({ email, password });
-  if (error) { toast(error.message, 'error'); return; }
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        name,
+        phone_number: phone,
+        division,
+        district
+      }
+    }
+  });
+
+  if (error) {
+    toast('Signup failed: ' + error.message, 'error');
+    return;
+  }
 
   if (data.user) {
+    const user = data.user;
+
     const { error: donorError } = await sb.from('donors').insert({
-      user_id: data.user.id,
+      user_id: user.id,
+      name: name,
       phone_number: phone,
       division: division,
-      district: division
+      district: district
     });
-    if (donorError) { toast('Account created but profile save failed: ' + donorError.message, 'error'); return; }
+
+    if (donorError) {
+      if (donorError.code === '23505') {
+        console.warn('Donor already exists; this is okay.');
+      } else {
+        toast('Profile save failed: ' + donorError.message, 'error');
+        return;
+      }
+    }
   }
 
   toast('Account created! You can now log in.', 'success');
@@ -421,13 +514,16 @@ async function renderDashboard() {
   if (!currentUser) return;
   const welcomeEl = document.getElementById('dash-welcome');
   if (welcomeEl) welcomeEl.textContent = `Welcome, ${currentUser.email}!`;
+
   await renderMyCats();
   await renderDashAlerts();
 }
 
 async function renderMyCats() {
   const { data: donorData, error: donorErr } = await sb.from('donors')
-    .select('id').eq('user_id', currentUser.id).single();
+    .select('id')
+    .eq('user_id', currentUser.id)
+    .single();
 
   const container = document.getElementById('cat-list');
   const noCats = document.getElementById('no-cats');
@@ -475,22 +571,29 @@ function toggleCatForm() {
 
 async function handleAddCat(e) {
   e.preventDefault();
-  if (!currentUser) { toast('Please log in first.', 'error'); return; }
+  if (!currentUser) {
+    toast('Please log in first.', 'error');
+    return;
+  }
 
   const { data: donorData, error: donorErr } = await sb.from('donors')
-    .select('id').eq('user_id', currentUser.id).single();
+    .select('id, division, district')
+    .eq('user_id', currentUser.id)
+    .single();
 
-  if (donorErr || !donorData) { toast('Donor profile not found. Please sign up again.', 'error'); return; }
+  if (donorErr || !donorData) {
+    toast('Donor profile not found. Please complete your profile.', 'error');
+    return;
+  }
 
-  const division = document.getElementById('cat-division').value;
-  const district = document.getElementById('cat-district').value;
   const name = document.getElementById('cat-name').value.trim();
   const age = +document.getElementById('cat-age').value;
   const weight = +document.getElementById('cat-weight').value;
   const bloodType = document.getElementById('cat-blood').value;
 
-  if (!name || !age || !weight || !bloodType || !division || !district) {
-    toast('Please fill in all fields.', 'error'); return;
+  if (!name || !age || !weight || !bloodType) {
+    toast('Please fill in all fields.', 'error');
+    return;
   }
 
   const { error } = await sb.from('cats').insert({
@@ -499,11 +602,14 @@ async function handleAddCat(e) {
     age,
     weight,
     blood_type: bloodType,
-    location: `${division}, ${district}`,
+    location: `${donorData.division}, ${donorData.district}`,
     availability: true
   });
 
-  if (error) { toast('Failed to register cat: ' + error.message, 'error'); return; }
+  if (error) {
+    toast('Failed to register cat: ' + error.message, 'error');
+    return;
+  }
 
   e.target.reset();
   const form = document.getElementById('cat-form');
