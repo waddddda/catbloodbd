@@ -53,7 +53,7 @@ const STRINGS = {
     guide_ab_desc:'The rarest feline blood type. AB cats are <strong>universal recipients</strong> and can receive from A, B, or AB donors, but their blood should only be given to other AB cats.',
     guide_ab_yes:'Can receive from A, B, AB', guide_ab_no:'Should only donate to AB',
     guide_warn_title:'⚠️ Important',
-    guide_warn_desc:'Always consult a veterinarian before any blood transfusion. Cross-matching tests should be performed even between same-type cats.',
+    guide_warn_desc:'Always consult a veterinarian before any blood transfusion. Cross‑matching tests should be performed even between same‑type cats.',
     login_title:'Welcome Back', login_sub:'Log in to manage your donor profile',
     label_email:'Email', label_password:'Password', btn_login:'Login',
     login_switch:"Don't have an account?", login_switch_link:'Sign Up',
@@ -382,11 +382,14 @@ function renderDonorCards(cats, containerId) {
   `).join('');
 }
 
-// ---------- Emergency Alert (updated) ----------
+// ---------- Emergency Alert (fixed) ----------
 async function sendEmergencyAlert(e) {
   e.preventDefault();
 
-  const user = sb.auth.user();
+  // Get current user via session (new auth API)
+  const { data: { session } } = await sb.auth.getSession();
+  const user = session?.user || null;
+
   if (!user) {
     toast('Please log in first.', 'error');
     return;
@@ -401,17 +404,15 @@ async function sendEmergencyAlert(e) {
     return;
   }
 
-  const { error } = await sb
-    .from('emergency_alerts')
-    .insert({
-      user_id: user.id,
-      district,
-      blood_type: blood,
-      seeker_phone_number: phone,
-      seeker_message: `Urgent: Type ${blood} blood needed in ${district}`,
-      created_at: new Date().toISOString(),
-      resolved: false,
-    });
+  const { error } = await sb.from('emergency_alerts').insert({
+    user_id: user.id,
+    district,
+    blood_type: blood,
+    seeker_phone_number: phone,
+    seeker_message: `Urgent: Type ${blood} blood needed in ${district}`,
+    created_at: new Date().toISOString(),
+    resolved: false,
+  });
 
   if (error) {
     toast('Failed to send alert: ' + error.message, 'error');
@@ -431,7 +432,7 @@ async function sendEmergencyAlert(e) {
 
   // Refresh dashboard alerts so donors see it
   if (typeof renderDashAlerts === 'function') {
-    renderDashAlerts();
+    await renderDashAlerts();
   }
 }
 
