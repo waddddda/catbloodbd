@@ -187,10 +187,9 @@ async function ensureDonorProfile(userId, email) {
 
   if (!error && data) return { data, error: null };
 
-  // Insert default donor if missing
+  // Insert default donor if missing (fallback; trigger should do this too)
   const { error: insertError } = await sb.from('donors').insert({
     user_id: userId,
-    name: email.split('@')[0],
     phone_number: null,
     division: null,
     district: null
@@ -320,7 +319,8 @@ async function renderHomeStats() {
 async function renderSearchDefaults() {
   const { data, error } = await sb.from('cats')
     .select('*, donors(phone_number, division, district)')
-    .eq('availability', true);
+    .eq('breed', '') // or filter by whatever, or remove if not needed
+    .order('created_at', { ascending: false });
   if (error) { console.error(error); return; }
   renderDonorCards(data || [], 'search-results');
   const noRes = document.getElementById('no-results');
@@ -335,7 +335,7 @@ async function handleSearch(e) {
 
   let query = sb.from('cats')
     .select('*, donors(phone_number, division, district)')
-    .eq('availability', true);
+    .order('created_at', { ascending: false });
   if (blood) query = query.eq('blood_type', blood);
 
   const { data, error } = await query;
@@ -421,7 +421,7 @@ async function handleLogin(e) {
 
   currentUser = data.user;
 
-  // Ensure donor profile exists
+  // Ensure donor profile exists (trigger + fallback)
   const { error: donorErr } = await ensureDonorProfile(currentUser.id, email);
   if (donorErr) {
     toast('Profile issue: ' + donorErr.message, 'error');
@@ -481,19 +481,14 @@ async function handleSignup(e) {
 
     const { error: donorError } = await sb.from('donors').insert({
       user_id: user.id,
-      name: name,
       phone_number: phone,
       division: division,
       district: district
     });
 
-    if (donorError) {
-      if (donorError.code === '23505') {
-        console.warn('Donor already exists; this is okay.');
-      } else {
-        toast('Profile save failed: ' + donorError.message, 'error');
-        return;
-      }
+    if (donorError && donorError.code !== '23505') {
+      toast('Profile save failed: ' + donorError.message, 'error');
+      return;
     }
   }
 
@@ -535,13 +530,13 @@ async function renderMyCats() {
   }
 
   const { data: cats } = await sb.from('cats').select('*').eq('donor_id', donorData.id);
+  if (noCats) noCats.style.display = 'none';
 
   if (!cats || cats.length === 0) {
     if (container) container.innerHTML = '';
     if (noCats) noCats.style.display = 'block';
     return;
   }
-  if (noCats) noCats.style.display = 'none';
 
   container.innerHTML = cats.map(c => `
     <div class="donor-card">
@@ -587,6 +582,7 @@ async function handleAddCat(e) {
   }
 
   const name = document.getElementById('cat-name').value.trim();
+  const breed = document.getElementById('cat-breed').value.trim() || '';
   const age = +document.getElementById('cat-age').value;
   const weight = +document.getElementById('cat-weight').value;
   const bloodType = document.getElementById('cat-blood').value;
@@ -599,11 +595,11 @@ async function handleAddCat(e) {
   const { error } = await sb.from('cats').insert({
     donor_id: donorData.id,
     name,
+    breed,
     age,
     weight,
     blood_type: bloodType,
-    location: `${donorData.division}, ${donorData.district}`,
-    availability: true
+    location: `${donorData.division}, ${donorData.district}`
   });
 
   if (error) {
