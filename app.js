@@ -183,11 +183,11 @@ async function ensureDonorProfile(userId, email) {
   const { data, error } = await sb.from('donors')
     .select('id')
     .eq('user_id', userId)
-    .single();
+    .limit(1);
+  const donorData = data && data.length > 0 ? data[0] : null;
 
-  if (!error && data) return { data, error: null };
+  if (!error && donorData) return { data: donorData, error: null };
 
-  // Insert default donor if missing (fallback; trigger should do this too)
   const { error: insertError } = await sb.from('donors').insert({
     user_id: userId,
     phone_number: null,
@@ -199,10 +199,11 @@ async function ensureDonorProfile(userId, email) {
     return { data: null, error: insertError };
   }
 
-  const { data: newDonor, error: readErr } = await sb.from('donors')
+  const { data: newData, error: readErr } = await sb.from('donors')
     .select('id')
     .eq('user_id', userId)
-    .single();
+    .limit(1);
+  const newDonor = newData && newData.length > 0 ? newData[0] : null;
 
   return { data: newDonor, error: readErr };
 }
@@ -299,7 +300,8 @@ function updateCatDistricts() {
   if (div && BD_LOCATIONS[div]) {
     BD_LOCATIONS[div].forEach(d => {
       const opt = document.createElement('option');
-      opt.value = d; opt.textContent = d;
+      opt.value = d;
+      opt.textContent = d;
       sel.appendChild(opt);
     });
   }
@@ -319,7 +321,6 @@ async function renderHomeStats() {
 async function renderSearchDefaults() {
   const { data, error } = await sb.from('cats')
     .select('*, donors(phone_number, division, district)')
-    .eq('breed', '') // or filter by whatever, or remove if not needed
     .order('created_at', { ascending: false });
   if (error) { console.error(error); return; }
   renderDonorCards(data || [], 'search-results');
@@ -421,7 +422,6 @@ async function handleLogin(e) {
 
   currentUser = data.user;
 
-  // Ensure donor profile exists (trigger + fallback)
   const { error: donorErr } = await ensureDonorProfile(currentUser.id, email);
   if (donorErr) {
     toast('Profile issue: ' + donorErr.message, 'error');
@@ -515,10 +515,11 @@ async function renderDashboard() {
 }
 
 async function renderMyCats() {
-  const { data: donorData, error: donorErr } = await sb.from('donors')
+  const { data, error: donorErr } = await sb.from('donors')
     .select('id')
     .eq('user_id', currentUser.id)
-    .single();
+    .limit(1);
+  const donorData = data && data.length > 0 ? data[0] : null;
 
   const container = document.getElementById('cat-list');
   const noCats = document.getElementById('no-cats');
@@ -571,10 +572,11 @@ async function handleAddCat(e) {
     return;
   }
 
-  const { data: donorData, error: donorErr } = await sb.from('donors')
+  const { data, error: donorErr } = await sb.from('donors')
     .select('id, division, district')
     .eq('user_id', currentUser.id)
-    .single();
+    .limit(1);
+  const donorData = data && data.length > 0 ? data[0] : null;
 
   if (donorErr || !donorData) {
     toast('Donor profile not found. Please complete your profile.', 'error');
