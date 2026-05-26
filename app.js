@@ -8,9 +8,6 @@ const SUPABASE_URL = 'https://yimuprhlpdrawqnpyzxu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_7-pHlCZ9_QMTjdbNkPo5_g_ZsQNqKtO';
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ✅ Resend API Key (replace with your actual key)
-const RESEND_API_KEY = 're_QwqCFYDA_PPKNd2EodeGX2dBCxNG8uZ2b';
-
 const BD_LOCATIONS = {
   'Dhaka':       ['Dhaka','Gazipur','Narayanganj','Tangail','Manikganj','Munshiganj','Narsingdi','Faridpur','Madaripur','Gopalganj','Shariatpur','Rajbari','Kishoreganj'],
   'Chittagong':  ['Chittagong','Comilla',"Cox's Bazar",'Rangamati','Brahmanbaria','Noakhali','Feni','Chandpur','Lakshmipur','Bandarban','Khagrachari'],
@@ -402,54 +399,60 @@ async function requestNotificationPermission() {
   return permission === 'granted';
 }
 
-// ✅ Send email notifications to all donors in district via Resend
+// ✅ Send email notifications via Vercel serverless function (Vercel-compatible)
 async function notifyDonorsEmail(district, bloodType, seekerPhone) {
-  const { data: donors } = await sb.from('donors')
+  console.log('📧 Starting email notification for:', district, bloodType);
+  
+  const { data: donors, error: fetchError } = await sb.from('donors')
     .select('email')
     .eq('district', district);
   
+  if (fetchError) {
+    console.error('❌ Error fetching donors:', fetchError);
+    return;
+  }
+  
+  console.log('📮 Found donors:', donors);
+  
   if (!donors || donors.length === 0) {
-    console.log('No donors found in this district');
+    console.log('⚠️ No donors found in this district');
     return;
   }
 
   const validDonors = donors.filter(d => d.email && d.email.trim());
+  console.log('✅ Valid donors with email:', validDonors);
   
   if (validDonors.length === 0) {
-    console.log('No donors with email in this district');
+    console.log('⚠️ No donors with email in this district');
     return;
   }
 
+  // Send emails via Vercel serverless function
   for (const donor of validDonors) {
+    console.log(`📤 Sending email to: ${donor.email}`);
     try {
-      const response = await fetch('https://api.resend.com/emails', {
+      const response = await fetch('/api/send-email', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          from: 'CatBloodBD <onboarding@resend.dev>',
-          to: [donor.email],
-          subject: `🚨 Emergency: Type ${bloodType} Blood Needed in ${district}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; background: #fef2f2; border-radius: 8px;">
-              <h2 style="color: #e04f4f;">🚨 Emergency Blood Alert!</h2>
-              <p><strong>Type ${bloodType}</strong> blood is urgently needed in <strong>${district}</strong>.</p>
-              <p style="font-size: 1.2em;">Seeker's Phone: <a href="tel:${seekerPhone}" style="color: #0066cc;">${seekerPhone}</a></p>
-              <p style="margin-top: 20px;">If you have a cat donor matching this need, please contact them immediately.</p>
-              <p style="margin-top: 20px; color: #777; font-size: 0.9em;">CatBloodBD – Saving cat lives across Bangladesh</p>
-            </div>
-          `,
+          district,
+          bloodType,
+          seekerPhone,
+          donorEmail: donor.email,
         }),
       });
 
+      const data = await response.json();
+      console.log('📡 Response status:', response.status);
+      console.log('📨 Response data:', data);
+
       if (!response.ok) {
-        const error = await response.json();
-        console.error('Failed to send email to', donor.email, error);
+        console.error('❌ Failed to send email to', donor.email, data);
+      } else {
+        console.log('✅ Email sent successfully to', donor.email);
       }
     } catch (error) {
-      console.error('Email error for', donor.email, error);
+      console.error('❌ Email error for', donor.email, error);
     }
   }
 }
