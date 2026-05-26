@@ -268,24 +268,44 @@
           </div>
           <form id="cat-form" class="cat-form" style="display:none;" onsubmit="handleAddCat(event)">
             <div class="form-row">
-              <input type="text" id="cat-name" placeholder="Cat Name" required />
-              <input type="number" id="cat-age" placeholder="Age (yrs)" min="0" max="30" required />
-              <input type="number" id="cat-weight" placeholder="Weight (kg)" min="0" step="0.1" required />
+              <div class="form-group">
+                <label for="cat-name">Cat Name</label>
+                <input type="text" id="cat-name" placeholder="Fluffy" required />
+              </div>
+              <div class="form-group">
+                <label for="cat-age">Age (yrs)</label>
+                <input type="number" id="cat-age" placeholder="1" min="0.5" max="20" required />
+              </div>
+              <div class="form-group">
+                <label for="cat-weight">Weight (kg)</label>
+                <input type="number" id="cat-weight" placeholder="4.0" step="0.1" min="0.5" max="10" required />
+              </div>
             </div>
+
             <div class="form-row">
-              <select id="cat-division" required onchange="updateCatDistricts()">
-                <option value="">Division</option>
-              </select>
-              <select id="cat-district" required>
-                <option value="">District</option>
-              </select>
-              <select id="cat-blood" required>
-                <option value="">Blood Type</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="AB">AB</option>
-              </select>
+              <div class="form-group">
+                <label for="cat-division">Division</label>
+                <select id="cat-division" required onchange="updateCatDistricts()">
+                  <option value="">Division</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="cat-district">District</label>
+                <select id="cat-district" required>
+                  <option value="">District</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="cat-blood">Blood Type</label>
+                <select id="cat-blood" required>
+                  <option value="">Blood Type</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="AB">AB</option>
+                </select>
+              </div>
             </div>
+
             <div class="form-row">
               <button type="submit" class="btn btn-primary" data-i18n="btn_save">Save</button>
               <button type="button" class="btn btn-ghost" onclick="toggleCatForm()" data-i18n="btn_cancel">Cancel</button>
