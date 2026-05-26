@@ -399,9 +399,9 @@ async function requestNotificationPermission() {
   return permission === 'granted';
 }
 
-// ✅ Send email notifications via Vercel serverless function (Vercel-compatible)
+// ✅ EmailJS notification — sends to all donors in district
 async function notifyDonorsEmail(district, bloodType, seekerPhone) {
-  console.log('📧 Starting email notification for:', district, bloodType);
+  console.log('📧 Sending email via EmailJS for:', district, bloodType);
   
   const { data: donors, error: fetchError } = await sb.from('donors')
     .select('email')
@@ -424,40 +424,38 @@ async function notifyDonorsEmail(district, bloodType, seekerPhone) {
   
   if (validDonors.length === 0) {
     console.log('⚠️ No donors with email in this district');
+    toast('Alert saved, but no donors have emails yet.', 'warning');
     return;
   }
 
-  // Send emails via Vercel serverless function
+  const EMAILJS_SERVICE_ID = 'service_f8fudhp';
+  const EMAILJS_TEMPLATE_ID = 'template_l2khfjj';
+
+  let sentCount = 0;
+  
   for (const donor of validDonors) {
     console.log(`📤 Sending email to: ${donor.email}`);
     try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          district,
-          bloodType,
-          seekerPhone,
-          donorEmail: donor.email,
-        }),
-      });
+      const templateParams = {
+        to_email: donor.email,
+        district: district,
+        blood_type: bloodType,
+        seeker_phone: seekerPhone
+      };
 
-      const data = await response.json();
-      console.log('📡 Response status:', response.status);
-      console.log('📨 Response data:', data);
-
-      if (!response.ok) {
-        console.error('❌ Failed to send email to', donor.email, data);
-      } else {
-        console.log('✅ Email sent successfully to', donor.email);
-      }
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+      
+      console.log('✅ Email sent successfully to', donor.email);
+      sentCount++;
     } catch (error) {
       console.error('❌ Email error for', donor.email, error);
     }
   }
+  
+  toast(`✅ Emergency alert sent! ${sentCount} donor(s) notified.`, 'success');
 }
 
-// ---------- Emergency Alert (with email notifications) ----------
+// ---------- Emergency Alert (with EmailJS notifications) ----------
 async function sendEmergencyAlert(e) {
   e.preventDefault();
 
