@@ -67,6 +67,7 @@ const STRINGS = {
     footer_love:'Made with ❤️ for cats.',
     opt_select_div:'Select Division',
     calling:'📞 Call', contact:'Owner Contact',
+    label_emergency_phone: 'Seeker Phone Number',
   },
   bn: {
     nav_home:'হোম', nav_search:'খুঁজুন', nav_guide:'গাইড', nav_login:'লগইন', nav_dashboard:'ড্যাশবোর্ড', nav_logout:'লগআউট',
@@ -114,6 +115,7 @@ const STRINGS = {
     footer_love:'বিড়ালদের জন্য ❤️ দিয়ে তৈরি।',
     opt_select_div:'বিভাগ নির্বাচন করুন',
     calling:'📞 কল করুন', contact:'মালিকের যোগাযোগ',
+    label_emergency_phone: 'আপনার ফোন নম্বর',
   }
 };
 
@@ -380,27 +382,57 @@ function renderDonorCards(cats, containerId) {
   `).join('');
 }
 
-// ---------- Emergency Alert ----------
+// ---------- Emergency Alert (updated) ----------
 async function sendEmergencyAlert(e) {
   e.preventDefault();
+
+  const user = sb.auth.user();
+  if (!user) {
+    toast('Please log in first.', 'error');
+    return;
+  }
+
+  const phone = document.getElementById('alert-phone').value.trim();
   const district = document.getElementById('alert-district').value;
   const blood = document.getElementById('alert-blood').value;
-  if (!district || !blood) { toast('Please select both district and blood type.', 'error'); return; }
 
-  const { error } = await sb.from('emergency_alerts').insert({
-    district,
-    seeker_phone_number: 'public',
-    seeker_message: `Urgent: Type ${blood} blood needed in ${district}`
-  });
+  if (!phone || !district || !blood) {
+    toast('Please fill all fields.', 'error');
+    return;
+  }
 
-  if (error) { toast('Failed to send alert: ' + error.message, 'error'); return; }
+  const { error } = await sb
+    .from('emergency_alerts')
+    .insert({
+      user_id: user.id,
+      district,
+      blood_type: blood,
+      seeker_phone_number: phone,
+      seeker_message: `Urgent: Type ${blood} blood needed in ${district}`,
+      created_at: new Date().toISOString(),
+      resolved: false,
+    });
+
+  if (error) {
+    toast('Failed to send alert: ' + error.message, 'error');
+    return;
+  }
 
   const confirm = document.getElementById('alert-confirm');
   if (confirm) {
     confirm.style.display = 'block';
-    confirm.innerHTML = `✅ Alert recorded for ${district}! Please also search above and call donors directly.`;
+    confirm.innerHTML = `✅ Alert recorded for ${district} with phone ${phone}! Please also search above and call donors directly.`;
   }
-  toast(`Emergency alert sent for ${district}!`, 'success');
+
+  toast(
+    `Emergency alert sent for ${district}! Seeker phone: ${phone}`,
+    'success'
+  );
+
+  // Refresh dashboard alerts so donors see it
+  if (typeof renderDashAlerts === 'function') {
+    renderDashAlerts();
+  }
 }
 
 // ---------- Auth ----------
@@ -449,8 +481,9 @@ async function handleSignup(e) {
     toast('Please select both division and district.', 'error');
     return;
   }
-  // Fixed regex: removed extra escaping
-  if (!phone || !/^\+?(88)?01[3-9]\d{8}$/.test(phone.replace(/\s/g, ''))) {
+  // Regex: allow +8801x or 01x, 11 digits
+  const phoneClean = phone.replace(/\s/g, '');
+  if (!/^(?:\+8801|01)[3-9]\d{8}$/.test(phoneClean)) {
     toast('Please enter a valid Bangladeshi phone number.', 'error');
     return;
   }
@@ -467,9 +500,9 @@ async function handleSignup(e) {
         name,
         phone_number: phone,
         division,
-        district
-      }
-    }
+        district,
+      },
+    },
   });
 
   if (error) {
@@ -484,7 +517,7 @@ async function handleSignup(e) {
       user_id: user.id,
       phone_number: phone,
       division: division,
-      district: district
+      district: district,
     });
 
     if (donorError && donorError.code !== '23505') {
@@ -618,7 +651,7 @@ async function handleAddCat(e) {
     age,
     weight,
     blood_type: bloodType,
-    location: `${donorData.division}, ${donorData.district}`
+    location: `${donorData.division}, ${donorData.district}`,
   });
 
   if (error) {
@@ -635,11 +668,15 @@ async function handleAddCat(e) {
 async function deleteCat(id) {
   if (!confirm('Are you sure you want to remove this cat?')) return;
   const { error } = await sb.from('cats').delete().eq('id', id);
-  if (error) { toast('Failed to delete: ' + error.message, 'error'); return; }
+  if (error) {
+    toast('Failed to delete: ' + error.message, 'error');
+    return;
+  }
   toast('Cat removed.', 'info');
   await renderMyCats();
 }
 
+// ---------- Emergency Alerts in Dashboard ----------
 async function renderDashAlerts() {
   const container = document.getElementById('dash-alerts');
   const noAlerts = document.getElementById('no-alerts');
@@ -651,14 +688,20 @@ async function renderDashAlerts() {
     return;
   }
   if (noAlerts) noAlerts.style.display = 'none';
+
   container.innerHTML = data.map(a => {
     const time = new Date(a.created_at).toLocaleString();
+    const phone = a.seeker_phone_number ? a.seeker_phone_number : 'Not provided';
     return `
-      <div class="alert-item">
-        <div class="alert-pulse-dot"></div>
-        <div class="alert-item-content">
-          <strong>🚨 ${esc(a.seeker_message)}</strong>
-          <span>${time}</span>
+      <div class="alert-card">
+        <div class="alert-inner">
+          <p class="alert-tag" style="margin:0 0 5px 0;color:#e04f4f;">🚨 Emergency Alert</p>
+          <p style="margin:2px 0;"><strong>Blood Type:</strong> ${esc(a.blood_type)}</p>
+          <p style="margin:2px 0;"><strong>District:</strong> ${esc(a.district)}</p>
+          <p style="margin:2px 0 0 0;">
+            <strong>Seeker Phone:</strong> ${esc(phone)}
+          </p>
+          <small>${time}</small>
         </div>
       </div>
     `;
