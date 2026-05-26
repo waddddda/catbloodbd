@@ -345,8 +345,8 @@ async function handleSearch(e) {
   if (error) { toast('Search failed.', 'error'); return; }
 
   let results = data || [];
-  if (division) results = results.filter(c => c.donors?.division === division);
-  if (district) results = results.filter(c => c.donors?.district === district);
+  if (division) results = results.filter(c => c.division === division);
+  if (district) results = results.filter(c => c.district === district);
 
   renderDonorCards(results, 'search-results');
   const noRes = document.getElementById('no-results');
@@ -363,7 +363,7 @@ function renderDonorCards(cats, containerId) {
         <div class="donor-avatar">🐱</div>
         <div>
           <div class="donor-name">${esc(c.name)}</div>
-          <div class="donor-location">${esc(c.donors?.division || '')} → ${esc(c.donors?.district || '')}</div>
+          <div class="donor-location">${esc(c.division || '')} → ${esc(c.district || '')}</div>
         </div>
       </div>
       <div class="donor-details">
@@ -386,7 +386,6 @@ function renderDonorCards(cats, containerId) {
 async function sendEmergencyAlert(e) {
   e.preventDefault();
 
-  // Get current user via session (new auth API)
   const { data: { session } } = await sb.auth.getSession();
   const user = session?.user || null;
 
@@ -430,7 +429,6 @@ async function sendEmergencyAlert(e) {
     'success'
   );
 
-  // Refresh dashboard alerts so donors see it
   if (typeof renderDashAlerts === 'function') {
     await renderDashAlerts();
   }
@@ -482,7 +480,6 @@ async function handleSignup(e) {
     toast('Please select both division and district.', 'error');
     return;
   }
-  // Regex: allow +8801x or 01x, 11 digits
   const phoneClean = phone.replace(/\s/g, '');
   if (!/^\+8801[3-9]\d{8}$|^(?:01)[3-9]\d{8}$/.test(phoneClean)) {
     toast('Please enter a valid Bangladeshi phone number.', 'error');
@@ -549,6 +546,7 @@ async function renderDashboard() {
   await renderDashAlerts();
 }
 
+// ✅ Updated renderMyCats – shows cat's own division & district
 async function renderMyCats() {
   const { data, error: donorErr } = await sb.from('donors')
     .select('id')
@@ -580,7 +578,7 @@ async function renderMyCats() {
         <div class="donor-avatar">🐱</div>
         <div>
           <div class="donor-name">${esc(c.name)}</div>
-          <div class="donor-location">${esc(c.location || '')}</div>
+          <div class="donor-location">${esc(c.division || '')} → ${esc(c.district || '')}</div>
         </div>
       </div>
       <div class="donor-details">
@@ -600,7 +598,7 @@ function toggleCatForm() {
   if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
 
-// ✅ handleAddCat – fixed and safe
+// ✅ Updated handleAddCat – saves cat's division & district from form, not donor profile
 async function handleAddCat(e) {
   e.preventDefault();
 
@@ -635,7 +633,7 @@ async function handleAddCat(e) {
   }
 
   const { data, error: donorErr } = await sb.from('donors')
-    .select('id, division, district')
+    .select('id')
     .eq('user_id', currentUser.id)
     .limit(1);
   const donorData = data && data.length > 0 ? data[0] : null;
@@ -652,7 +650,9 @@ async function handleAddCat(e) {
     age,
     weight,
     blood_type: bloodType,
-    location: `${donorData.division}, ${donorData.district}`,
+    location: `${division}, ${district}`,
+    division: division,
+    district: district,
   });
 
   if (error) {
