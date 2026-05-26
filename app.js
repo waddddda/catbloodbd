@@ -8,6 +8,9 @@ const SUPABASE_URL = 'https://yimuprhlpdrawqnpyzxu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_7-pHlCZ9_QMTjdbNkPo5_g_ZsQNqKtO';
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ✅ Resend API Key (replace with your actual key)
+const RESEND_API_KEY = 're_QwqCFYDA_PPKNd2EodeGX2dBCxNG8uZ2b';
+
 const BD_LOCATIONS = {
   'Dhaka':       ['Dhaka','Gazipur','Narayanganj','Tangail','Manikganj','Munshiganj','Narsingdi','Faridpur','Madaripur','Gopalganj','Shariatpur','Rajbari','Kishoreganj'],
   'Chittagong':  ['Chittagong','Comilla',"Cox's Bazar",'Rangamati','Brahmanbaria','Noakhali','Feni','Chandpur','Lakshmipur','Bandarban','Khagrachari'],
@@ -197,7 +200,8 @@ async function ensureDonorProfile(userId, email) {
     user_id: userId,
     phone_number: null,
     division: null,
-    district: null
+    district: null,
+    email: email
   });
 
   if (insertError && insertError.code !== '23505') {
@@ -398,9 +402,10 @@ async function requestNotificationPermission() {
   return permission === 'granted';
 }
 
-async function notifyDonors(district, bloodType, seekerPhone) {
+// ✅ Send email notifications to all donors in district via Resend
+async function notifyDonorsEmail(district, bloodType, seekerPhone) {
   const { data: donors } = await sb.from('donors')
-    .select('phone_number')
+    .select('email')
     .eq('district', district);
   
   if (!donors || donors.length === 0) {
@@ -408,37 +413,48 @@ async function notifyDonors(district, bloodType, seekerPhone) {
     return;
   }
 
-  if (Notification.permission === 'granted') {
-    const notification = new Notification('🚨 Emergency Blood Alert!', {
-      body: `Type ${bloodType} needed in ${district}. Seeker: ${seekerPhone}`,
-      icon: 'https://cdn-icons-png.flaticon.com/512/853/853766.png',
-      badge: 'https://cdn-icons-png.flaticon.com/512/1067/1067357.png',
-      tag: `emergency-${district}-${bloodType}`,
-      requireInteraction: true,
-      actions: [
-        { action: 'view', title: 'View Dashboard' },
-        { action: 'call', title: 'Call Seeker' }
-      ]
-    });
+  const validDonors = donors.filter(d => d.email && d.email.trim());
+  
+  if (validDonors.length === 0) {
+    console.log('No donors with email in this district');
+    return;
+  }
 
-    notification.onclick = (e) => {
-      e.preventDefault();
-      window.focus();
-      location.hash = 'dashboard';
-      notification.close();
-    };
+  for (const donor of validDonors) {
+    try {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'CatBloodBD <onboarding@resend.dev>',
+          to: [donor.email],
+          subject: `🚨 Emergency: Type ${bloodType} Blood Needed in ${district}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px; background: #fef2f2; border-radius: 8px;">
+              <h2 style="color: #e04f4f;">🚨 Emergency Blood Alert!</h2>
+              <p><strong>Type ${bloodType}</strong> blood is urgently needed in <strong>${district}</strong>.</p>
+              <p style="font-size: 1.2em;">Seeker's Phone: <a href="tel:${seekerPhone}" style="color: #0066cc;">${seekerPhone}</a></p>
+              <p style="margin-top: 20px;">If you have a cat donor matching this need, please contact them immediately.</p>
+              <p style="margin-top: 20px; color: #777; font-size: 0.9em;">CatBloodBD – Saving cat lives across Bangladesh</p>
+            </div>
+          `,
+        }),
+      });
 
-    notification.onaction = async (e) => {
-      if (e.action.action === 'call') {
-        window.open(`tel:${seekerPhone}`, '_blank');
-      } else if (e.action.action === 'view') {
-        location.hash = 'dashboard';
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Failed to send email to', donor.email, error);
       }
-    };
+    } catch (error) {
+      console.error('Email error for', donor.email, error);
+    }
   }
 }
 
-// ---------- Emergency Alert (with notifications) ----------
+// ---------- Emergency Alert (with email notifications) ----------
 async function sendEmergencyAlert(e) {
   e.preventDefault();
 
@@ -474,12 +490,13 @@ async function sendEmergencyAlert(e) {
     return;
   }
 
-  await notifyDonors(district, blood, phone);
+  // ✅ Send email notifications to all donors in the district
+  await notifyDonorsEmail(district, blood, phone);
 
   const confirm = document.getElementById('alert-confirm');
   if (confirm) {
     confirm.style.display = 'block';
-    confirm.innerHTML = `✅ Alert recorded for ${district} with phone ${phone}! Please also search above and call donors directly.`;
+    confirm.innerHTML = `✅ Alert recorded for ${district} with phone ${phone}! Emails sent to donors in this district.`;
   }
 
   toast(
@@ -574,6 +591,7 @@ async function handleSignup(e) {
       phone_number: phone,
       division: division,
       district: district,
+      email: email,
     });
 
     if (donorError && donorError.code !== '23505') {
