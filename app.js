@@ -2,14 +2,12 @@
    CatBloodBD – Application Logic (Supabase Edition)
    =================================================== */
 
-// ---------- Supabase Setup ----------
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 const SUPABASE_URL = 'https://yimuprhlpdrawqnpyzxu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_7-pHlCZ9_QMTjdbNkPo5_g_ZsQNqKtO';
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ---------- Bangladesh Location Data ----------
 const BD_LOCATIONS = {
   'Dhaka':       ['Dhaka','Gazipur','Narayanganj','Tangail','Manikganj','Munshiganj','Narsingdi','Faridpur','Madaripur','Gopalganj','Shariatpur','Rajbari','Kishoreganj'],
   'Chittagong':  ['Chittagong','Comilla',"Cox's Bazar",'Rangamati','Brahmanbaria','Noakhali','Feni','Chandpur','Lakshmipur','Bandarban','Khagrachari'],
@@ -24,108 +22,103 @@ const BD_LOCATIONS = {
 // ---------- i18n ----------
 const STRINGS = {
   en: {
-    nav_home: 'Home', nav_search: 'Search', nav_guide: 'Guide',
-    nav_login: 'Login', nav_dashboard: 'Dashboard', nav_logout: 'Logout',
-    hero_tag: "🐾 Bangladesh's First Cat Blood Donor Network",
-    hero_title: "Every Drop Counts.<br/>Save a Cat's Life Today.",
-    hero_sub: 'Connect with verified cat blood donors across all 8 divisions. Fast search, emergency alerts, and a caring community.',
-    hero_cta1: 'Find a Donor', hero_cta2: 'Register Your Cat',
-    hero_trust1: 'Free Forever', hero_trust2: 'All 8 Divisions', hero_trust3: 'Instant Contact',
-    how_title: 'How It Works', how_subtitle: 'Three simple steps to save a life',
-    step1_title: 'Register Your Cat', step1_desc: "Create an account and add your cat's blood type, location, and contact details.",
-    step2_title: 'Search Donors', step2_desc: 'Filter by division, district, and blood type to find compatible donors near you.',
-    step3_title: 'Contact Directly', step3_desc: "Get the donor's phone number and call them directly. No middleman needed.",
-    stat_donors: 'Registered Donors', stat_divisions: 'Divisions Covered', stat_alerts: 'Lives Connected',
-    mission_title: 'Our Mission',
-    mission_desc: "Cat blood transfusions save lives — but finding a compatible donor in Bangladesh is nearly impossible. We're building the first nationwide registry so that no cat owner ever has to face that helpless moment alone.",
-    mission_cta: 'Join the Mission',
-    search_title: 'Find a Blood Donor', search_subtitle: 'Search by location and blood type — get phone numbers instantly',
-    label_division: 'Division', label_district: 'District', label_blood: 'Blood Type',
-    opt_all_div: 'All Divisions', opt_all_dist: 'All Districts', opt_all_blood: 'All Types',
-    btn_search: 'Search', no_results: 'No donors found. Try changing your filters.',
-    emergency_title: '🚨 Need Blood Urgently?', emergency_sub: 'Send an alert to all donors in a district',
-    alert_btn: 'Send Emergency Alert',
-    guide_title: 'Cat Blood Type Guide', guide_subtitle: 'Understanding feline blood compatibility',
-    guide_a_prev: '~95% of cats in most breeds',
-    guide_a_desc: 'The most common blood type. Type A cats can safely receive blood from other Type A donors. <strong>Must never receive Type B blood</strong> — it can cause fatal reactions.',
-    guide_a_yes: 'Can donate to A', guide_a_no: 'Cannot donate to B', guide_a_warn: 'Caution with AB',
-    guide_b_prev: 'Common in British Shorthair, Devon Rex',
-    guide_b_desc: 'Less common overall but prevalent in certain breeds. Type B cats have strong anti-A antibodies, making cross-type transfusion extremely dangerous.',
-    guide_b_yes: 'Can donate to B', guide_b_no: 'Cannot donate to A', guide_b_warn: 'Caution with AB',
-    guide_ab_prev: 'Very rare — ~1% of cats',
-    guide_ab_desc: 'The rarest feline blood type. AB cats are <strong>universal recipients</strong> and can receive from A, B, or AB donors, but their blood should only be given to other AB cats.',
-    guide_ab_yes: 'Can receive from A, B, AB', guide_ab_no: 'Should only donate to AB',
-    guide_warn_title: '⚠️ Important',
-    guide_warn_desc: 'Always consult a veterinarian before any blood transfusion. Cross-matching tests should be performed even between same-type cats.',
-    login_title: 'Welcome Back', login_sub: 'Log in to manage your donor profile',
-    label_email: 'Email', label_password: 'Password', btn_login: 'Login',
-    login_switch: "Don't have an account?", login_switch_link: 'Sign Up',
-    signup_title: 'Create Account', signup_sub: 'Join the network and register your cat',
-    label_name: 'Full Name', label_phone: 'Phone Number', btn_signup: 'Create Account',
-    signup_switch: 'Already have an account?', signup_switch_link: 'Login',
-    dash_title: 'Dashboard', dash_mycats: 'My Cats', btn_addcat: '+ Add Cat',
-    btn_save: 'Save', btn_cancel: 'Cancel', dash_nocats: "You haven't registered any cats yet.",
-    dash_history: 'Emergency Alerts', dash_noalerts: 'No emergency alerts yet.',
-    footer_desc: 'Connecting cat blood donors across Bangladesh since 2026.',
-    footer_love: 'Made with ❤️ for cats.',
-    opt_select_div: 'Select Division',
-    calling: '📞 Call', contact: 'Owner Contact',
+    nav_home:'Home', nav_search:'Search', nav_guide:'Guide', nav_login:'Login', nav_dashboard:'Dashboard', nav_logout:'Logout',
+    hero_tag:"🐾 Bangladesh's First Cat Blood Donor Network",
+    hero_title:"Every Drop Counts.<br/>Save a Cat's Life Today.",
+    hero_sub:'Connect with verified cat blood donors across all 8 divisions. Fast search, emergency alerts, and a caring community.',
+    hero_cta1:'Find a Donor', hero_cta2:'Register Your Cat',
+    hero_trust1:'Free Forever', hero_trust2:'All 8 Divisions', hero_trust3:'Instant Contact',
+    how_title:'How It Works', how_subtitle:'Three simple steps to save a life',
+    step1_title:'Register Your Cat', step1_desc:"Create an account and add your cat's blood type, location, and contact details.",
+    step2_title:'Search Donors', step2_desc:'Filter by division, district, and blood type to find compatible donors near you.',
+    step3_title:'Contact Directly', step3_desc:"Get the donor's phone number and call them directly. No middleman needed.",
+    stat_donors:'Registered Donors', stat_divisions:'Divisions Covered', stat_alerts:'Lives Connected',
+    mission_title:'Our Mission',
+    mission_desc:"Cat blood transfusions save lives — but finding a compatible donor in Bangladesh is nearly impossible. We're building the first nationwide registry so that no cat owner ever has to face that helpless moment alone.",
+    mission_cta:'Join the Mission',
+    search_title:'Find a Blood Donor', search_subtitle:'Search by location and blood type — get phone numbers instantly',
+    label_division:'Division', label_district:'District', label_blood:'Blood Type',
+    opt_all_div:'All Divisions', opt_all_dist:'All Districts', opt_all_blood:'All Types',
+    btn_search:'Search', no_results:'No donors found. Try changing your filters.',
+    emergency_title:'🚨 Need Blood Urgently?', emergency_sub:'Send an alert to all donors in a district',
+    alert_btn:'Send Emergency Alert',
+    guide_title:'Cat Blood Type Guide', guide_subtitle:'Understanding feline blood compatibility',
+    guide_a_prev:'~95% of cats in most breeds',
+    guide_a_desc:'The most common blood type. Type A cats can safely receive blood from other Type A donors. <strong>Must never receive Type B blood</strong> — it can cause fatal reactions.',
+    guide_a_yes:'Can donate to A', guide_a_no:'Cannot donate to B', guide_a_warn:'Caution with AB',
+    guide_b_prev:'Common in British Shorthair, Devon Rex',
+    guide_b_desc:'Less common overall but prevalent in certain breeds. Type B cats have strong anti-A antibodies, making cross-type transfusion extremely dangerous.',
+    guide_b_yes:'Can donate to B', guide_b_no:'Cannot donate to A', guide_b_warn:'Caution with AB',
+    guide_ab_prev:'Very rare — ~1% of cats',
+    guide_ab_desc:'The rarest feline blood type. AB cats are <strong>universal recipients</strong> and can receive from A, B, or AB donors, but their blood should only be given to other AB cats.',
+    guide_ab_yes:'Can receive from A, B, AB', guide_ab_no:'Should only donate to AB',
+    guide_warn_title:'⚠️ Important',
+    guide_warn_desc:'Always consult a veterinarian before any blood transfusion. Cross-matching tests should be performed even between same-type cats.',
+    login_title:'Welcome Back', login_sub:'Log in to manage your donor profile',
+    label_email:'Email', label_password:'Password', btn_login:'Login',
+    login_switch:"Don't have an account?", login_switch_link:'Sign Up',
+    signup_title:'Create Account', signup_sub:'Join the network and register your cat',
+    label_name:'Full Name', label_phone:'Phone Number', btn_signup:'Create Account',
+    signup_switch:'Already have an account?', signup_switch_link:'Login',
+    dash_title:'Dashboard', dash_mycats:'My Cats', btn_addcat:'+ Add Cat',
+    btn_save:'Save', btn_cancel:'Cancel', dash_nocats:"You haven't registered any cats yet.",
+    dash_history:'Emergency Alerts', dash_noalerts:'No emergency alerts yet.',
+    footer_desc:'Connecting cat blood donors across Bangladesh since 2026.',
+    footer_love:'Made with ❤️ for cats.',
+    opt_select_div:'Select Division',
+    calling:'📞 Call', contact:'Owner Contact',
   },
   bn: {
-    nav_home: 'হোম', nav_search: 'খুঁজুন', nav_guide: 'গাইড',
-    nav_login: 'লগইন', nav_dashboard: 'ড্যাশবোর্ড', nav_logout: 'লগআউট',
-    hero_tag: '🐾 বাংলাদেশের প্রথম বিড়াল রক্তদাতা নেটওয়ার্ক',
-    hero_title: 'প্রতিটি ফোঁটা গুরুত্বপূর্ণ।<br/>আজই একটি বিড়ালের জীবন বাঁচান।',
-    hero_sub: 'সারা বাংলাদেশে ৮টি বিভাগে যাচাইকৃত বিড়াল রক্তদাতাদের সাথে সংযোগ করুন।',
-    hero_cta1: 'দাতা খুঁজুন', hero_cta2: 'আপনার বিড়াল নিবন্ধন করুন',
-    hero_trust1: 'সম্পূর্ণ বিনামূল্যে', hero_trust2: 'সকল ৮ বিভাগ', hero_trust3: 'তাৎক্ষণিক যোগাযোগ',
-    how_title: 'কিভাবে কাজ করে', how_subtitle: 'তিনটি সহজ ধাপে একটি জীবন বাঁচান',
-    step1_title: 'আপনার বিড়াল নিবন্ধন করুন', step1_desc: 'অ্যাকাউন্ট তৈরি করুন এবং আপনার বিড়ালের রক্তের ধরন, অবস্থান এবং যোগাযোগের তথ্য যোগ করুন।',
-    step2_title: 'দাতা খুঁজুন', step2_desc: 'কাছাকাছি সামঞ্জস্যপূর্ণ দাতা খুঁজে পেতে বিভাগ, জেলা এবং রক্তের ধরন দিয়ে ফিল্টার করুন।',
-    step3_title: 'সরাসরি যোগাযোগ করুন', step3_desc: 'দাতার ফোন নম্বর পান এবং সরাসরি কল করুন। কোনো মধ্যস্থতাকারী নেই।',
-    stat_donors: 'নিবন্ধিত দাতা', stat_divisions: 'বিভাগ কভার', stat_alerts: 'সংযুক্ত জীবন',
-    mission_title: 'আমাদের লক্ষ্য',
-    mission_desc: 'বিড়ালের রক্ত সঞ্চালন জীবন বাঁচায় — কিন্তু বাংলাদেশে একজন সামঞ্জস্যপূর্ণ দাতা খুঁজে পাওয়া প্রায় অসম্ভব। আমরা প্রথম জাতীয় রেজিস্ট্রি তৈরি করছি।',
-    mission_cta: 'মিশনে যোগ দিন',
-    search_title: 'রক্তদাতা খুঁজুন', search_subtitle: 'অবস্থান এবং রক্তের ধরন দিয়ে খুঁজুন — সাথে সাথে ফোন নম্বর পান',
-    label_division: 'বিভাগ', label_district: 'জেলা', label_blood: 'রক্তের ধরন',
-    opt_all_div: 'সব বিভাগ', opt_all_dist: 'সব জেলা', opt_all_blood: 'সব ধরন',
-    btn_search: 'খুঁজুন', no_results: 'কোনো দাতা পাওয়া যায়নি। ফিল্টার পরিবর্তন করে দেখুন।',
-    emergency_title: '🚨 জরুরি রক্ত দরকার?', emergency_sub: 'একটি জেলার সব দাতাকে সতর্কতা পাঠান',
-    alert_btn: 'জরুরি সতর্কতা পাঠান',
-    guide_title: 'বিড়ালের রক্তের ধরন গাইড', guide_subtitle: 'বিড়ালের রক্তের সামঞ্জস্যতা বোঝা',
-    guide_a_prev: 'বেশিরভাগ জাতের ~৯৫% বিড়াল',
-    guide_a_desc: 'সবচেয়ে সাধারণ রক্তের ধরন। <strong>কখনই টাইপ বি রক্ত গ্রহণ করা উচিত নয়</strong> — এটি মারাত্মক প্রতিক্রিয়া সৃষ্টি করতে পারে।',
-    guide_a_yes: 'A তে দান করতে পারে', guide_a_no: 'B তে দান করতে পারে না', guide_a_warn: 'AB এর সাথে সতর্কতা',
-    guide_b_prev: 'ব্রিটিশ শর্টহেয়ার, ডেভন রেক্সে সাধারণ',
-    guide_b_desc: 'কম সাধারণ কিন্তু কিছু জাতে প্রচলিত। টাইপ বি বিড়ালের শক্তিশালী অ্যান্টি-এ অ্যান্টিবডি আছে।',
-    guide_b_yes: 'B তে দান করতে পারে', guide_b_no: 'A তে দান করতে পারে না', guide_b_warn: 'AB এর সাথে সতর্কতা',
-    guide_ab_prev: 'অত্যন্ত বিরল — ~১% বিড়াল',
-    guide_ab_desc: 'সবচেয়ে বিরল রক্তের ধরন। AB বিড়াল <strong>সর্বজনীন গ্রহীতা</strong> এবং A, B বা AB দাতাদের কাছ থেকে রক্ত গ্রহণ করতে পারে।',
-    guide_ab_yes: 'A, B, AB থেকে গ্রহণ করতে পারে', guide_ab_no: 'শুধুমাত্র AB তে দান করা উচিত',
-    guide_warn_title: '⚠️ গুরুত্বপূর্ণ',
-    guide_warn_desc: 'যেকোনো রক্ত সঞ্চালনের আগে সর্বদা একজন পশু চিকিৎসকের সাথে পরামর্শ করুন।',
-    login_title: 'স্বাগতম', login_sub: 'আপনার দাতা প্রোফাইল পরিচালনা করতে লগইন করুন',
-    label_email: 'ইমেইল', label_password: 'পাসওয়ার্ড', btn_login: 'লগইন',
-    login_switch: 'অ্যাকাউন্ট নেই?', login_switch_link: 'নিবন্ধন করুন',
-    signup_title: 'অ্যাকাউন্ট তৈরি করুন', signup_sub: 'নেটওয়ার্কে যোগ দিন এবং আপনার বিড়াল নিবন্ধন করুন',
-    label_name: 'পূর্ণ নাম', label_phone: 'ফোন নম্বর', btn_signup: 'অ্যাকাউন্ট তৈরি করুন',
-    signup_switch: 'ইতিমধ্যে অ্যাকাউন্ট আছে?', signup_switch_link: 'লগইন',
-    dash_title: 'ড্যাশবোর্ড', dash_mycats: 'আমার বিড়ালরা', btn_addcat: '+ বিড়াল যোগ করুন',
-    btn_save: 'সংরক্ষণ করুন', btn_cancel: 'বাতিল', dash_nocats: 'আপনি এখনও কোনো বিড়াল নিবন্ধন করেননি।',
-    dash_history: 'জরুরি সতর্কতা', dash_noalerts: 'এখনও কোনো জরুরি সতর্কতা নেই।',
-    footer_desc: '২০২৬ সাল থেকে বাংলাদেশে বিড়াল রক্তদাতাদের সংযুক্ত করছি।',
-    footer_love: 'বিড়ালদের জন্য ❤️ দিয়ে তৈরি।',
-    opt_select_div: 'বিভাগ নির্বাচন করুন',
-    calling: '📞 কল করুন', contact: 'মালিকের যোগাযোগ',
+    nav_home:'হোম', nav_search:'খুঁজুন', nav_guide:'গাইড', nav_login:'লগইন', nav_dashboard:'ড্যাশবোর্ড', nav_logout:'লগআউট',
+    hero_tag:'🐾 বাংলাদেশের প্রথম বিড়াল রক্তদাতা নেটওয়ার্ক',
+    hero_title:'প্রতিটি ফোঁটা গুরুত্বপূর্ণ।<br/>আজই একটি বিড়ালের জীবন বাঁচান।',
+    hero_sub:'সারা বাংলাদেশে ৮টি বিভাগে যাচাইকৃত বিড়াল রক্তদাতাদের সাথে সংযোগ করুন।',
+    hero_cta1:'দাতা খুঁজুন', hero_cta2:'আপনার বিড়াল নিবন্ধন করুন',
+    hero_trust1:'সম্পূর্ণ বিনামূল্যে', hero_trust2:'সকল ৮ বিভাগ', hero_trust3:'তাৎক্ষণিক যোগাযোগ',
+    how_title:'কিভাবে কাজ করে', how_subtitle:'তিনটি সহজ ধাপে একটি জীবন বাঁচান',
+    step1_title:'আপনার বিড়াল নিবন্ধন করুন', step1_desc:'অ্যাকাউন্ট তৈরি করুন এবং আপনার বিড়ালের রক্তের ধরন, অবস্থান এবং যোগাযোগের তথ্য যোগ করুন।',
+    step2_title:'দাতা খুঁজুন', step2_desc:'কাছাকাছি সামঞ্জস্যপূর্ণ দাতা খুঁজে পেতে বিভাগ, জেলা এবং রক্তের ধরন দিয়ে ফিল্টার করুন।',
+    step3_title:'সরাসরি যোগাযোগ করুন', step3_desc:'দাতার ফোন নম্বর পান এবং সরাসরি কল করুন। কোনো মধ্যস্থতাকারী নেই।',
+    stat_donors:'নিবন্ধিত দাতা', stat_divisions:'বিভাগ কভার', stat_alerts:'সংযুক্ত জীবন',
+    mission_title:'আমাদের লক্ষ্য',
+    mission_desc:'বিড়ালের রক্ত সঞ্চালন জীবন বাঁচায় — কিন্তু বাংলাদেশে একজন সামঞ্জস্যপূর্ণ দাতা খুঁজে পাওয়া প্রায় অসম্ভব। আমরা প্রথম জাতীয় রেজিস্ট্রি তৈরি করছি।',
+    mission_cta:'মিশনে যোগ দিন',
+    search_title:'রক্তদাতা খুঁজুন', search_subtitle:'অবস্থান এবং রক্তের ধরন দিয়ে খুঁজুন — সাথে সাথে ফোন নম্বর পান',
+    label_division:'বিভাগ', label_district:'জেলা', label_blood:'রক্তের ধরন',
+    opt_all_div:'সব বিভাগ', opt_all_dist:'সব জেলা', opt_all_blood:'সব ধরন',
+    btn_search:'খুঁজুন', no_results:'কোনো দাতা পাওয়া যায়নি। ফিল্টার পরিবর্তন করে দেখুন।',
+    emergency_title:'🚨 জরুরি রক্ত দরকার?', emergency_sub:'একটি জেলার সব দাতাকে সতর্কতা পাঠান',
+    alert_btn:'জরুরি সতর্কতা পাঠান',
+    guide_title:'বিড়ালের রক্তের ধরন গাইড', guide_subtitle:'বিড়ালের রক্তের সামঞ্জস্যতা বোঝা',
+    guide_a_prev:'বেশিরভাগ জাতের ~৯৫% বিড়াল',
+    guide_a_desc:'সবচেয়ে সাধারণ রক্তের ধরন। <strong>কখনই টাইপ বি রক্ত গ্রহণ করা উচিত নয়</strong> — এটি মারাত্মক প্রতিক্রিয়া সৃষ্টি করতে পারে।',
+    guide_a_yes:'A তে দান করতে পারে', guide_a_no:'B তে দান করতে পারে না', guide_a_warn:'AB এর সাথে সতর্কতা',
+    guide_b_prev:'ব্রিটিশ শর্টহেয়ার, ডেভন রেক্সে সাধারণ',
+    guide_b_desc:'কম সাধারণ কিন্তু কিছু জাতে প্রচলিত। টাইপ বি বিড়ালের শক্তিশালী অ্যান্টি-এ অ্যান্টিবডি আছে।',
+    guide_b_yes:'B তে দান করতে পারে', guide_b_no:'A তে দান করতে পারে না', guide_b_warn:'AB এর সাথে সতর্কতা',
+    guide_ab_prev:'অত্যন্ত বিরল — ~১% বিড়াল',
+    guide_ab_desc:'সবচেয়ে বিরল রক্তের ধরন। AB বিড়াল <strong>সর্বজনীন গ্রহীতা</strong>।',
+    guide_ab_yes:'A, B, AB থেকে গ্রহণ করতে পারে', guide_ab_no:'শুধুমাত্র AB তে দান করা উচিত',
+    guide_warn_title:'⚠️ গুরুত্বপূর্ণ',
+    guide_warn_desc:'যেকোনো রক্ত সঞ্চালনের আগে সর্বদা একজন পশু চিকিৎসকের সাথে পরামর্শ করুন।',
+    login_title:'স্বাগতম', login_sub:'আপনার দাতা প্রোফাইল পরিচালনা করতে লগইন করুন',
+    label_email:'ইমেইল', label_password:'পাসওয়ার্ড', btn_login:'লগইন',
+    login_switch:'অ্যাকাউন্ট নেই?', login_switch_link:'নিবন্ধন করুন',
+    signup_title:'অ্যাকাউন্ট তৈরি করুন', signup_sub:'নেটওয়ার্কে যোগ দিন এবং আপনার বিড়াল নিবন্ধন করুন',
+    label_name:'পূর্ণ নাম', label_phone:'ফোন নম্বর', btn_signup:'অ্যাকাউন্ট তৈরি করুন',
+    signup_switch:'ইতিমধ্যে অ্যাকাউন্ট আছে?', signup_switch_link:'লগইন',
+    dash_title:'ড্যাশবোর্ড', dash_mycats:'আমার বিড়ালরা', btn_addcat:'+ বিড়াল যোগ করুন',
+    btn_save:'সংরক্ষণ করুন', btn_cancel:'বাতিল', dash_nocats:'আপনি এখনও কোনো বিড়াল নিবন্ধন করেননি।',
+    dash_history:'জরুরি সতর্কতা', dash_noalerts:'এখনও কোনো জরুরি সতর্কতা নেই।',
+    footer_desc:'২০২৬ সাল থেকে বাংলাদেশে বিড়াল রক্তদাতাদের সংযুক্ত করছি।',
+    footer_love:'বিড়ালদের জন্য ❤️ দিয়ে তৈরি।',
+    opt_select_div:'বিভাগ নির্বাচন করুন',
+    calling:'📞 কল করুন', contact:'মালিকের যোগাযোগ',
   }
 };
 
 let currentLang = 'en';
-
-function t(key) {
-  return STRINGS[currentLang][key] || STRINGS['en'][key] || key;
-}
+function t(key) { return STRINGS[currentLang][key] || STRINGS['en'][key] || key; }
 
 function applyTranslations() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -157,54 +150,17 @@ function toast(msg, type = 'success') {
   setTimeout(() => el.remove(), 3200);
 }
 
-// ---------- Router ----------
-function navigateTo(viewId) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  const target = document.getElementById('view-' + viewId);
-  if (target) {
-    target.classList.add('active');
-    target.style.animation = 'none';
-    target.offsetHeight;
-    target.style.animation = '';
-  }
-  document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
-  const activeLink = document.querySelector(`.nav-link[data-view="${viewId}"]`);
-  if (activeLink) activeLink.classList.add('active');
-  document.getElementById('nav-links').classList.remove('open');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  if (viewId === 'home') renderHomeStats();
-  if (viewId === 'search') renderSearchDefaults();
-  if (viewId === 'dashboard') renderDashboard();
-}
-
-function router() {
-  const hash = location.hash.replace('#', '') || 'home';
-  if (hash === 'dashboard' && !currentUser) {
-    location.hash = 'login';
-    return;
-  }
-  navigateTo(hash);
-}
-
-window.addEventListener('hashchange', router);
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
-});
-
 // ---------- Auth State ----------
 let currentUser = null;
 
 async function initAuth() {
   const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    updateAuthNav();
-  }
+  if (session) { currentUser = session.user; }
   sb.auth.onAuthStateChange((_event, session) => {
     currentUser = session?.user || null;
     updateAuthNav();
   });
+  updateAuthNav();
 }
 
 function updateAuthNav() {
@@ -221,6 +177,37 @@ function updateAuthNav() {
     logoutBtn.style.display = 'none';
   }
 }
+
+// ---------- Router ----------
+function navigateTo(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById('view-' + viewId);
+  if (target) {
+    target.classList.add('active');
+    target.style.animation = 'none';
+    target.offsetHeight;
+    target.style.animation = '';
+  }
+  document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+  const activeLink = document.querySelector(`.nav-link[data-view="${viewId}"]`);
+  if (activeLink) activeLink.classList.add('active');
+  document.getElementById('nav-links').classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (viewId === 'home') renderHomeStats();
+  if (viewId === 'search') renderSearchDefaults();
+  if (viewId === 'dashboard') renderDashboard();
+}
+
+function router() {
+  const hash = location.hash.replace('#', '') || 'home';
+  if (hash === 'dashboard' && !currentUser) { location.hash = 'login'; return; }
+  navigateTo(hash);
+}
+
+window.addEventListener('hashchange', router);
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
+});
 
 // ---------- Mobile Menu ----------
 function toggleMobileMenu() {
@@ -266,8 +253,7 @@ function updateDistricts() {
   if (div && BD_LOCATIONS[div]) {
     BD_LOCATIONS[div].forEach(d => {
       const opt = document.createElement('option');
-      opt.value = d;
-      opt.textContent = d;
+      opt.value = d; opt.textContent = d;
       sel.appendChild(opt);
     });
   }
@@ -280,8 +266,7 @@ function updateCatDistricts() {
   if (div && BD_LOCATIONS[div]) {
     BD_LOCATIONS[div].forEach(d => {
       const opt = document.createElement('option');
-      opt.value = d;
-      opt.textContent = d;
+      opt.value = d; opt.textContent = d;
       sel.appendChild(opt);
     });
   }
@@ -291,16 +276,21 @@ function updateCatDistricts() {
 async function renderHomeStats() {
   const { count: donorCount } = await sb.from('cats').select('*', { count: 'exact', head: true });
   const { count: alertCount } = await sb.from('emergency_alerts').select('*', { count: 'exact', head: true });
-  document.getElementById('stat-donors').textContent = donorCount || 0;
-  document.getElementById('stat-alerts').textContent = alertCount || 0;
+  const d = document.getElementById('stat-donors');
+  const a = document.getElementById('stat-alerts');
+  if (d) d.textContent = donorCount || 0;
+  if (a) a.textContent = alertCount || 0;
 }
 
 // ---------- Search ----------
 async function renderSearchDefaults() {
-  const { data, error } = await sb.from('cats').select('*, donors(phone_number, division, district)').eq('availability', true);
+  const { data, error } = await sb.from('cats')
+    .select('*, donors(phone_number, division, district)')
+    .eq('availability', true);
   if (error) { console.error(error); return; }
   renderDonorCards(data || [], 'search-results');
-  document.getElementById('no-results').style.display = (data && data.length) ? 'none' : 'block';
+  const noRes = document.getElementById('no-results');
+  if (noRes) noRes.style.display = (data && data.length) ? 'none' : 'block';
 }
 
 async function handleSearch(e) {
@@ -320,14 +310,14 @@ async function handleSearch(e) {
   if (district) results = results.filter(c => c.donors?.district === district);
 
   renderDonorCards(results, 'search-results');
-  document.getElementById('no-results').style.display = results.length ? 'none' : 'block';
+  const noRes = document.getElementById('no-results');
+  if (noRes) noRes.style.display = results.length ? 'none' : 'block';
 }
 
 function renderDonorCards(cats, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
   if (cats.length === 0) { container.innerHTML = ''; return; }
-
   container.innerHTML = cats.map(c => `
     <div class="donor-card">
       <div class="donor-card-header">
@@ -362,15 +352,17 @@ async function sendEmergencyAlert(e) {
 
   const { error } = await sb.from('emergency_alerts').insert({
     district,
-    seeker_phone_number: 'public alert',
+    seeker_phone_number: 'public',
     seeker_message: `Urgent: Type ${blood} blood needed in ${district}`
   });
 
-  if (error) { toast('Failed to send alert.', 'error'); return; }
+  if (error) { toast('Failed to send alert: ' + error.message, 'error'); return; }
 
   const confirm = document.getElementById('alert-confirm');
-  confirm.style.display = 'block';
-  confirm.innerHTML = `✅ Alert recorded! Donors in ${district} have been notified. Please also search above to call donors directly.`;
+  if (confirm) {
+    confirm.style.display = 'block';
+    confirm.innerHTML = `✅ Alert recorded for ${district}! Please also search above and call donors directly.`;
+  }
   toast(`Emergency alert sent for ${district}!`, 'success');
 }
 
@@ -382,10 +374,9 @@ async function handleLogin(e) {
 
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
   if (error) { toast(error.message, 'error'); return; }
-
   currentUser = data.user;
   updateAuthNav();
-  toast(`Welcome back!`, 'success');
+  toast('Welcome back!', 'success');
   location.hash = 'dashboard';
 }
 
@@ -398,20 +389,22 @@ async function handleSignup(e) {
   const division = document.getElementById('signup-division').value;
 
   if (!division) { toast('Please select your division.', 'error'); return; }
+  if (password.length < 6) { toast('Password must be at least 6 characters.', 'error'); return; }
 
   const { data, error } = await sb.auth.signUp({ email, password });
   if (error) { toast(error.message, 'error'); return; }
 
   if (data.user) {
-    await sb.from('donors').insert({
+    const { error: donorError } = await sb.from('donors').insert({
       user_id: data.user.id,
       phone_number: phone,
       division: division,
       district: division
     });
+    if (donorError) { toast('Account created but profile save failed: ' + donorError.message, 'error'); return; }
   }
 
-  toast('Account created! Please check your email to verify.', 'success');
+  toast('Account created! You can now log in.', 'success');
   location.hash = 'login';
 }
 
@@ -426,25 +419,33 @@ async function logout() {
 // ---------- Dashboard ----------
 async function renderDashboard() {
   if (!currentUser) return;
-  document.getElementById('dash-welcome').textContent = `Welcome, ${currentUser.email}!`;
+  const welcomeEl = document.getElementById('dash-welcome');
+  if (welcomeEl) welcomeEl.textContent = `Welcome, ${currentUser.email}!`;
   await renderMyCats();
   await renderDashAlerts();
 }
 
 async function renderMyCats() {
-  const { data: donorData } = await sb.from('donors').select('id').eq('user_id', currentUser.id).single();
-  if (!donorData) { document.getElementById('no-cats').style.display = 'block'; return; }
+  const { data: donorData, error: donorErr } = await sb.from('donors')
+    .select('id').eq('user_id', currentUser.id).single();
 
-  const { data: cats } = await sb.from('cats').select('*').eq('donor_id', donorData.id);
   const container = document.getElementById('cat-list');
   const noCats = document.getElementById('no-cats');
 
-  if (!cats || cats.length === 0) {
-    container.innerHTML = '';
-    noCats.style.display = 'block';
+  if (donorErr || !donorData) {
+    if (container) container.innerHTML = '';
+    if (noCats) noCats.style.display = 'block';
     return;
   }
-  noCats.style.display = 'none';
+
+  const { data: cats } = await sb.from('cats').select('*').eq('donor_id', donorData.id);
+
+  if (!cats || cats.length === 0) {
+    if (container) container.innerHTML = '';
+    if (noCats) noCats.style.display = 'block';
+    return;
+  }
+  if (noCats) noCats.style.display = 'none';
 
   container.innerHTML = cats.map(c => `
     <div class="donor-card">
@@ -461,7 +462,7 @@ async function renderMyCats() {
         <span class="donor-tag weight">⚖️ ${c.weight} kg</span>
       </div>
       <div class="donor-actions">
-        <button class="btn btn-ghost btn-sm" onclick="deleteCat('${c.id}')">🗑️ Delete</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="deleteCat('${c.id}')">🗑️ Delete</button>
       </div>
     </div>
   `).join('');
@@ -469,23 +470,35 @@ async function renderMyCats() {
 
 function toggleCatForm() {
   const form = document.getElementById('cat-form');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
 
 async function handleAddCat(e) {
   e.preventDefault();
-  const { data: donorData } = await sb.from('donors').select('id').eq('user_id', currentUser.id).single();
-  if (!donorData) { toast('Donor profile not found.', 'error'); return; }
+  if (!currentUser) { toast('Please log in first.', 'error'); return; }
+
+  const { data: donorData, error: donorErr } = await sb.from('donors')
+    .select('id').eq('user_id', currentUser.id).single();
+
+  if (donorErr || !donorData) { toast('Donor profile not found. Please sign up again.', 'error'); return; }
 
   const division = document.getElementById('cat-division').value;
   const district = document.getElementById('cat-district').value;
+  const name = document.getElementById('cat-name').value.trim();
+  const age = +document.getElementById('cat-age').value;
+  const weight = +document.getElementById('cat-weight').value;
+  const bloodType = document.getElementById('cat-blood').value;
+
+  if (!name || !age || !weight || !bloodType || !division || !district) {
+    toast('Please fill in all fields.', 'error'); return;
+  }
 
   const { error } = await sb.from('cats').insert({
     donor_id: donorData.id,
-    name: document.getElementById('cat-name').value.trim(),
-    age: +document.getElementById('cat-age').value,
-    weight: +document.getElementById('cat-weight').value,
-    blood_type: document.getElementById('cat-blood').value,
+    name,
+    age,
+    weight,
+    blood_type: bloodType,
     location: `${division}, ${district}`,
     availability: true
   });
@@ -493,15 +506,16 @@ async function handleAddCat(e) {
   if (error) { toast('Failed to register cat: ' + error.message, 'error'); return; }
 
   e.target.reset();
-  document.getElementById('cat-form').style.display = 'none';
-  toast('Cat registered as a donor!', 'success');
+  const form = document.getElementById('cat-form');
+  if (form) form.style.display = 'none';
+  toast(`${name} registered as a donor!`, 'success');
   await renderMyCats();
 }
 
 async function deleteCat(id) {
   if (!confirm('Are you sure you want to remove this cat?')) return;
   const { error } = await sb.from('cats').delete().eq('id', id);
-  if (error) { toast('Failed to delete.', 'error'); return; }
+  if (error) { toast('Failed to delete: ' + error.message, 'error'); return; }
   toast('Cat removed.', 'info');
   await renderMyCats();
 }
@@ -512,11 +526,11 @@ async function renderDashAlerts() {
   const { data } = await sb.from('emergency_alerts').select('*').order('created_at', { ascending: false }).limit(10);
 
   if (!data || data.length === 0) {
-    container.innerHTML = '';
-    noAlerts.style.display = 'block';
+    if (container) container.innerHTML = '';
+    if (noAlerts) noAlerts.style.display = 'block';
     return;
   }
-  noAlerts.style.display = 'none';
+  if (noAlerts) noAlerts.style.display = 'none';
   container.innerHTML = data.map(a => {
     const time = new Date(a.created_at).toLocaleString();
     return `
@@ -535,7 +549,7 @@ async function renderDashAlerts() {
 function esc(str) {
   if (!str) return '';
   const div = document.createElement('div');
-  div.textContent = str;
+  div.textContent = String(str);
   return div.innerHTML;
 }
 
