@@ -484,7 +484,7 @@ async function handleSignup(e) {
   }
   // Regex: allow +8801x or 01x, 11 digits
   const phoneClean = phone.replace(/\s/g, '');
-  if (!/^(?:\+8801|01)[3-9]\d{8}$/.test(phoneClean)) {
+  if (!/^\+8801[3-9]\d{8}$|^(?:01)[3-9]\d{8}$/.test(phoneClean)) {
     toast('Please enter a valid Bangladeshi phone number.', 'error');
     return;
   }
@@ -677,11 +677,14 @@ async function deleteCat(id) {
   await renderMyCats();
 }
 
-// ---------- Emergency Alerts in Dashboard ----------
+// ✅ Updated renderDashAlerts – Professional emergency alert cards
 async function renderDashAlerts() {
   const container = document.getElementById('dash-alerts');
   const noAlerts = document.getElementById('no-alerts');
-  const { data } = await sb.from('emergency_alerts').select('*').order('created_at', { ascending: false }).limit(10);
+  const { data } = await sb.from('emergency_alerts')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(10);
 
   if (!data || data.length === 0) {
     if (container) container.innerHTML = '';
@@ -693,16 +696,29 @@ async function renderDashAlerts() {
   container.innerHTML = data.map(a => {
     const time = new Date(a.created_at).toLocaleString();
     const phone = a.seeker_phone_number ? a.seeker_phone_number : 'Not provided';
+
     return `
       <div class="alert-card">
         <div class="alert-inner">
-          <p class="alert-tag" style="margin:0 0 5px 0;color:#e04f4f;">🚨 Emergency Alert</p>
+          <p class="alert-tag" style="margin:0 0 5px 0;color:#e04f4f;">
+            🚨 Emergency Alert
+          </p>
+
+          <p style="margin:2px 0;color:#1a1a1a;">
+            <strong>Seeking donor in:</strong> 
+            <span style="color:#0066cc;font-weight:bold;">${esc(a.district)}</span>
+          </p>
+
           <p style="margin:2px 0;"><strong>Blood Type:</strong> ${esc(a.blood_type)}</p>
-          <p style="margin:2px 0;"><strong>District:</strong> ${esc(a.district)}</p>
           <p style="margin:2px 0 0 0;">
             <strong>Seeker Phone:</strong> ${esc(phone)}
           </p>
-          <small>${time}</small>
+
+          <p style="margin:10px 0 5px 0;color:#777;font-size:0.9em;">
+            Please contact this seeker only if you know a cat donor in this district.
+          </p>
+
+          <small style="color:#999;">${time}</small>
         </div>
       </div>
     `;
