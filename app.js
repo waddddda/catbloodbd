@@ -403,6 +403,13 @@ async function requestNotificationPermission() {
 async function notifyDonorsEmail(district, bloodType, seekerPhone) {
   console.log('📧 Sending email via EmailJS for:', district, bloodType);
   
+  // Check if EmailJS is loaded
+  if (typeof emailjs === 'undefined') {
+    console.error('❌ EmailJS not loaded! Check index.html');
+    toast('Alert saved, but email failed. EmailJS not loaded.', 'error');
+    return;
+  }
+  
   const { data: donors, error: fetchError } = await sb.from('donors')
     .select('email')
     .eq('district', district);
