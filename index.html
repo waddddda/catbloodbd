@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
-  <script type="module" src="app.js"></script>
+  <script defer src="app.js"></script>
 </head>
 <body>
   <nav id="navbar">
@@ -20,12 +20,12 @@
       </a>
 
       <div id="nav-links">
-        <a class="nav-link" data-view="home" href="#home">Home</a>
-        <a class="nav-link" data-view="search" href="#search">Search</a>
-        <a class="nav-link" data-view="guide" href="#guide">Guide</a>
-        <a class="nav-link" data-view="login" href="#login" id="nav-login">Login</a>
-        <a class="nav-link" data-view="dashboard" href="#dashboard" id="nav-dashboard" style="display:none;">Dashboard</a>
-        <button class="nav-link nav-logout" id="nav-logout" style="display:none;" onclick="logout()">Logout</button>
+        <a class="nav-link" data-view="home" href="#home" data-i18n="nav_home">Home</a>
+        <a class="nav-link" data-view="search" href="#search" data-i18n="nav_search">Search</a>
+        <a class="nav-link" data-view="guide" href="#guide" data-i18n="nav_guide">Guide</a>
+        <a class="nav-link" data-view="login" href="#login" id="nav-login" data-i18n="nav_login">Login</a>
+        <a class="nav-link" data-view="dashboard" href="#dashboard" id="nav-dashboard" style="display:none;" data-i18n="nav_dashboard">Dashboard</a>
+        <button class="nav-link nav-logout" id="nav-logout" style="display:none;" onclick="logout()" data-i18n="nav_logout">Logout</button>
         <button class="lang-toggle" id="lang-toggle" onclick="toggleLang()">বাং</button>
       </div>
 
@@ -44,12 +44,14 @@
         <div class="hero-bg"></div>
         <div class="hero-content">
           <div class="hero-tag" data-i18n="hero_tag">🐾 Bangladesh's First Cat Blood Donor Network</div>
-          <h1 data-i18n="hero_title">Every Drop Counts.<br/>Save a Cat's Life Today.</h1>
+          <h1 data-i18n="hero_title" data-i18n-html="true">Every Drop Counts.<br/>Save a Cat's Life Today.</h1>
           <p class="hero-sub" data-i18n="hero_sub">Connect with verified cat blood donors across all 8 divisions. Fast search, emergency alerts, and a caring community.</p>
+
           <div class="hero-actions">
             <a href="#search" class="btn btn-primary btn-lg" data-i18n="hero_cta1">Find a Donor</a>
             <a href="#signup" class="btn btn-outline btn-lg" data-i18n="hero_cta2">Register Your Cat</a>
           </div>
+
           <div class="hero-trust">
             <span data-i18n="hero_trust1">Free Forever</span>
             <span data-i18n="hero_trust2">All 8 Divisions</span>
@@ -61,6 +63,7 @@
       <section class="section">
         <h2 class="section-title" data-i18n="how_title">How It Works</h2>
         <p class="section-subtitle" data-i18n="how_subtitle">Three simple steps to save a life</p>
+
         <div class="steps-grid">
           <div class="step-card">
             <div class="step-number">1</div>
@@ -68,12 +71,14 @@
             <h3 data-i18n="step1_title">Register Your Cat</h3>
             <p data-i18n="step1_desc">Create an account and add your cat's blood type, location, and contact details.</p>
           </div>
+
           <div class="step-card">
             <div class="step-number">2</div>
             <div class="step-icon">🔎</div>
             <h3 data-i18n="step2_title">Search Donors</h3>
             <p data-i18n="step2_desc">Filter by division, district, and blood type to find compatible donors near you.</p>
           </div>
+
           <div class="step-card">
             <div class="step-number">3</div>
             <div class="step-icon">📞</div>
@@ -109,51 +114,51 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">Why Let Your Cat Donate?</h2>
-        <p class="section-subtitle">A healthy cat can help save another cat’s life</p>
+        <h2 class="section-title" data-i18n="donate_title">Why Let Your Cat Donate?</h2>
+        <p class="section-subtitle" data-i18n="donate_subtitle">A healthy cat can help save another cat’s life</p>
 
         <div class="info-grid">
           <div class="info-card">
             <div class="info-icon">🩸</div>
-            <h3>Save a Life</h3>
-            <p>Your cat may help save another cat in an emergency.</p>
+            <h3 data-i18n="donate_card1_title">Save a Life</h3>
+            <p data-i18n="donate_card1_text">Your cat may help save another cat in an emergency.</p>
           </div>
 
           <div class="info-card">
             <div class="info-icon">✅</div>
-            <h3>Safe Screening</h3>
-            <p>A vet checks health, weight, and temperament first.</p>
+            <h3 data-i18n="donate_card2_title">Safe Screening</h3>
+            <p data-i18n="donate_card2_text">A vet checks health, weight, and temperament first.</p>
           </div>
 
           <div class="info-card">
             <div class="info-icon">🏥</div>
-            <h3>Vet-Supervised</h3>
-            <p>Donation is done carefully to keep donor cats safe.</p>
+            <h3 data-i18n="donate_card3_title">Vet-Supervised</h3>
+            <p data-i18n="donate_card3_text">Donation is done carefully to keep donor cats safe.</p>
           </div>
         </div>
       </section>
 
       <section class="section">
-        <h2 class="section-title">Is My Cat Eligible?</h2>
-        <p class="section-subtitle">Most donor cats share a few healthy traits</p>
+        <h2 class="section-title" data-i18n="eligible_title">Is My Cat Eligible?</h2>
+        <p class="section-subtitle" data-i18n="eligible_subtitle">Most donor cats share a few healthy traits</p>
 
         <div class="guide-grid">
           <div class="guide-card type-a">
             <div class="guide-badge">✓</div>
-            <h3>Good Donor Traits</h3>
-            <p>Usually 1–8 years old, healthy, calm, and fully vaccinated.</p>
+            <h3 data-i18n="eligible_card1_title">Good Donor Traits</h3>
+            <p data-i18n="eligible_card1_text">Usually 1–8 years old, healthy, calm, and fully vaccinated.</p>
           </div>
 
           <div class="guide-card type-b">
             <div class="guide-badge">🧪</div>
-            <h3>Health Checks</h3>
-            <p>Vets check blood type and screen for FeLV and FIV.</p>
+            <h3 data-i18n="eligible_card2_title">Health Checks</h3>
+            <p data-i18n="eligible_card2_text">Vets check blood type and screen for FeLV and FIV.</p>
           </div>
 
           <div class="guide-card type-ab">
             <div class="guide-badge">🏠</div>
-            <h3>Best Lifestyle</h3>
-            <p>Indoor cats with stable health histories are easier to screen.</p>
+            <h3 data-i18n="eligible_card3_title">Best Lifestyle</h3>
+            <p data-i18n="eligible_card3_text">Indoor cats with stable health histories are easier to screen.</p>
           </div>
         </div>
       </section>
@@ -169,21 +174,21 @@
             <div class="form-group">
               <label data-i18n="label_division">Division</label>
               <select id="search-division" onchange="updateDistricts()">
-                <option value="">All Divisions</option>
+                <option value="" data-i18n="all_divisions">All Divisions</option>
               </select>
             </div>
 
             <div class="form-group">
               <label data-i18n="label_district">District</label>
               <select id="search-district">
-                <option value="">All Districts</option>
+                <option value="" data-i18n="all_districts">All Districts</option>
               </select>
             </div>
 
             <div class="form-group">
               <label data-i18n="label_blood">Blood Type</label>
               <select id="search-blood">
-                <option value="">All Types</option>
+                <option value="" data-i18n="all_types">All Types</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="AB">AB</option>
@@ -195,7 +200,7 @@
         </form>
 
         <div class="results-header">
-          <span>Available donors</span>
+          <span data-i18n="available_donors">Available donors</span>
           <span id="result-count"></span>
         </div>
 
@@ -203,15 +208,15 @@
         <div id="no-results" class="no-results" style="display:none;" data-i18n="no_results">No donors found. Try changing your filters.</div>
 
         <div class="alert-box">
-          <h3>🚨 Need Blood Urgently?</h3>
-          <p data-i18n="emergency_sub">Send an alert to all donors in a district</p>
+          <h3 data-i18n="urgent_title">🚨 Need Blood Urgently?</h3>
+          <p data-i18n="urgent_sub">Send an alert to all donors in a district</p>
           <form class="alert-form" onsubmit="sendEmergencyAlert(event)">
-            <input id="alert-phone" type="tel" placeholder="Your phone number" required>
+            <input id="alert-phone" type="tel" data-i18n="alert_phone_placeholder" placeholder="Your phone number" required>
             <select id="alert-district" required>
-              <option value="">Select District</option>
+              <option value="" data-i18n="select_district">Select District</option>
             </select>
             <select id="alert-blood" required>
-              <option value="">Blood Type</option>
+              <option value="" data-i18n="blood_type">Blood Type</option>
               <option value="A">A</option>
               <option value="B">B</option>
               <option value="AB">AB</option>
@@ -231,7 +236,7 @@
         <div class="guide-grid">
           <div class="guide-card type-a">
             <div class="guide-badge">A</div>
-            <h3>Type A</h3>
+            <h3 data-i18n="guide_a_title">Type A</h3>
             <p data-i18n="guide_a_desc">The most common blood type. Type A cats can safely receive blood from other Type A donors.</p>
             <div class="compat">
               <span class="compat-yes" data-i18n="guide_a_yes">Can donate to A</span>
@@ -242,7 +247,7 @@
 
           <div class="guide-card type-b">
             <div class="guide-badge">B</div>
-            <h3>Type B</h3>
+            <h3 data-i18n="guide_b_title">Type B</h3>
             <p data-i18n="guide_b_desc">Less common overall but prevalent in certain breeds. Type B cats have strong anti-A antibodies.</p>
             <div class="compat">
               <span class="compat-yes" data-i18n="guide_b_yes">Can donate to B</span>
@@ -253,7 +258,7 @@
 
           <div class="guide-card type-ab">
             <div class="guide-badge">AB</div>
-            <h3>Type AB</h3>
+            <h3 data-i18n="guide_ab_title">Type AB</h3>
             <p data-i18n="guide_ab_desc">The rarest feline blood type. AB cats are universal recipients and can receive from A, B, or AB donors.</p>
             <div class="compat">
               <span class="compat-yes" data-i18n="guide_ab_yes">Can receive from A, B, AB</span>
@@ -277,11 +282,11 @@
           <form onsubmit="handleLogin(event)">
             <div class="form-group">
               <label data-i18n="label_email">Email</label>
-              <input id="login-email" type="email" required>
+              <input id="login-email" type="email" data-i18n="login_email_placeholder" placeholder="Email" required>
             </div>
             <div class="form-group">
               <label data-i18n="label_password">Password</label>
-              <input id="login-password" type="password" required>
+              <input id="login-password" type="password" data-i18n="login_password_placeholder" placeholder="Password" required>
             </div>
             <button class="btn btn-primary btn-full" type="submit" data-i18n="btn_login">Login</button>
           </form>
@@ -301,30 +306,30 @@
           <form onsubmit="handleSignup(event)">
             <div class="form-group">
               <label data-i18n="label_name">Full Name</label>
-              <input id="signup-name" type="text" required>
+              <input id="signup-name" type="text" data-i18n="signup_name_placeholder" placeholder="Full Name" required>
             </div>
             <div class="form-group">
               <label data-i18n="label_email">Email</label>
-              <input id="signup-email" type="email" required>
+              <input id="signup-email" type="email" data-i18n="signup_email_placeholder" placeholder="Email" required>
             </div>
             <div class="form-group">
               <label data-i18n="label_password">Password</label>
-              <input id="signup-password" type="password" required>
+              <input id="signup-password" type="password" data-i18n="signup_password_placeholder" placeholder="Password" required>
             </div>
             <div class="form-group">
               <label data-i18n="label_phone">Phone Number</label>
-              <input id="signup-phone" type="tel" required>
+              <input id="signup-phone" type="tel" data-i18n="signup_phone_placeholder" placeholder="Phone Number" required>
             </div>
             <div class="form-group">
               <label data-i18n="label_division">Division</label>
               <select id="signup-division" onchange="updateDistricts('signup-division','signup-district')" required>
-                <option value="">Select Division</option>
+                <option value="" data-i18n="select_division">Select Division</option>
               </select>
             </div>
             <div class="form-group">
               <label data-i18n="label_district">District</label>
               <select id="signup-district" required>
-                <option value="">Select District</option>
+                <option value="" data-i18n="select_district">Select District</option>
               </select>
             </div>
             <button class="btn btn-primary btn-full" type="submit" data-i18n="btn_signup">Create Account</button>
@@ -341,7 +346,7 @@
       <section class="section">
         <div class="dash-header">
           <h2 class="section-title" data-i18n="dash_title">Dashboard</h2>
-          <p class="section-subtitle" id="dash-welcome">Welcome</p>
+          <p class="section-subtitle" id="dash-welcome" data-i18n="dash_welcome">Welcome</p>
         </div>
 
         <div class="dash-panel">
@@ -352,20 +357,20 @@
 
           <form id="cat-form" class="cat-form" style="display:none;" onsubmit="handleAddCat(event)">
             <div class="form-row">
-              <input id="cat-name" placeholder="Cat Name" required>
-              <input id="cat-breed" placeholder="Breed">
-              <input id="cat-age" type="number" placeholder="Age" required>
-              <input id="cat-weight" type="number" step="0.1" placeholder="Weight" required>
+              <input id="cat-name" data-i18n="cat_name_placeholder" placeholder="Cat Name" required>
+              <input id="cat-breed" data-i18n="cat_breed_placeholder" placeholder="Breed">
+              <input id="cat-age" type="number" data-i18n="cat_age_placeholder" placeholder="Age" required>
+              <input id="cat-weight" type="number" step="0.1" data-i18n="cat_weight_placeholder" placeholder="Weight" required>
             </div>
             <div class="form-row">
               <select id="cat-division" onchange="updateCatDistricts()" required>
-                <option value="">Select Division</option>
+                <option value="" data-i18n="select_division">Select Division</option>
               </select>
               <select id="cat-district" required>
-                <option value="">Select District</option>
+                <option value="" data-i18n="select_district">Select District</option>
               </select>
               <select id="cat-blood" required>
-                <option value="">Blood Type</option>
+                <option value="" data-i18n="blood_type">Blood Type</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="AB">AB</option>
