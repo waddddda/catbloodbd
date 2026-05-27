@@ -82,7 +82,7 @@ const STRINGS = {
     step3_title:'সরাসরি যোগাযোগ করুন', step3_desc:'দাতার ফোন নম্বর পান এবং সরাসরি কল করুন। কোনো মধ্যস্থতাকারী নেই।',
     stat_donors:'নিবন্ধিত দাতা', stat_divisions:'বিভাগ কভার', stat_alerts:'সংযুক্ত জীবন',
     mission_title:'আমাদের লক্ষ্য',
-    mission_desc:'বিড়ালের রক্ত সঞ্চালন জীবন বাঁচায় — কিন্তু বাংলাদেশে একজন সামঞ্জস্যপূর্ণ দাতা খুঁজে পাওয়া প্রায় অসম্ভব। আমরা প্রথম জাতীয় রেজিস্ট্রি তৈরি করছি।',
+    mission_desc:'বিড়ালের রক্ত সঞ্চালন জীবন বাঁচায় — কিন্তু বাংলাদেশে একজন সামঞ্জস্যপূর্ণ দাতা খুঁজে পাওয়া প্রায় অসম্ভব! আমরা প্রথম জাতীয় রেজিস্ট্রি তৈরি করছি।',
     mission_cta:'মিশনে যোগ দিন',
     search_title:'রক্তদাতা খুঁজুন', search_subtitle:'অবস্থান এবং রক্তের ধরন দিয়ে খুঁজুন — সাথে সাথে ফোন নম্বর পান',
     label_division:'বিভাগ', label_district:'জেলা', label_blood:'রক্তের ধরন',
@@ -462,17 +462,9 @@ async function notifyDonorsEmail(district, bloodType, seekerPhone) {
   toast(`✅ Emergency alert sent! ${sentCount} donor(s) notified.`, 'success');
 }
 
-// ---------- Emergency Alert (with EmailJS notifications) ----------
+// ---------- Emergency Alert (NO login required) ----------
 async function sendEmergencyAlert(e) {
   e.preventDefault();
-
-  const { data: { session } } = await sb.auth.getSession();
-  const user = session?.user || null;
-
-  if (!user) {
-    toast('Please log in first.', 'error');
-    return;
-  }
 
   const phone = document.getElementById('alert-phone').value.trim();
   const district = document.getElementById('alert-district').value;
@@ -483,8 +475,9 @@ async function sendEmergencyAlert(e) {
     return;
   }
 
+  // ✅ Store alert without requiring login (anonymous seeker)
   const { error } = await sb.from('emergency_alerts').insert({
-    user_id: user.id,
+    user_id: null, // Anonymous seeker
     district,
     blood_type: blood,
     seeker_phone_number: phone,
@@ -508,13 +501,12 @@ async function sendEmergencyAlert(e) {
   }
 
   toast(
-    `Emergency alert sent for ${district}! Seeker phone: ${phone}`,
+    `✅ Emergency alert sent for ${district}! Donors will be notified.`,
     'success'
   );
 
-  if (typeof renderDashAlerts === 'function') {
-    await renderDashAlerts();
-  }
+  // Clear form
+  e.target.reset();
 }
 
 // ---------- Auth ----------
