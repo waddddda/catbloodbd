@@ -5,8 +5,8 @@
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const SUPABASE_URL = 'https://mgtukytgvoodupefhhoj.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_ga5Ws__vZRq9clJ4EhM-NQ_vD7Pg-Vn';
+const SUPABASE_URL = 'https://yimuprhlpdrawqnpyzxu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_7-pHlCZ9_QMTjdbNkPo5_g_ZsQNqKtO';
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const BD_LOCATIONS = {
