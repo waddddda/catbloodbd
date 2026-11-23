@@ -783,18 +783,16 @@ async function handleClinicSuggestion(e) {
 /* ---------- home stats ---------- */
 
 async function renderHomeStats() {
-  const [cats, clinics, alerts] = await Promise.all([
-    sb.from('cats').select('*', { count: 'exact', head: true }),
-    sb.from('clinics').select('*', { count: 'exact', head: true }),
-    sb.from('emergency_alerts').select('*', { count: 'exact', head: true })
-  ]);
+  // Counts come from a database function because alerts aren't publicly readable.
+  const { data, error } = await sb.rpc('site_stats');
+  if (error) console.error(error);
   const set = (id, n) => {
     const el = document.getElementById(id);
     if (el) el.textContent = n || 0;
   };
-  set('stat-donors', cats.count);
-  set('stat-clinics', clinics.count);
-  set('stat-alerts', alerts.count);
+  set('stat-donors', data?.cats);
+  set('stat-clinics', data?.clinics);
+  set('stat-alerts', data?.alerts);
 }
 
 /* ---------- search (clinics first, then donors) ---------- */
