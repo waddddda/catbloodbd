@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CatBloodBD</title>
+  <meta name="description" content="Find vet clinics that list cat blood transfusion and donor cats across Bangladesh." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -21,6 +22,7 @@
       <div id="nav-links">
         <a class="nav-link" data-view="home" href="#home" data-i18n="nav_home">Home</a>
         <a class="nav-link" data-view="search" href="#search" data-i18n="nav_search">Search</a>
+        <a class="nav-link" data-view="clinics" href="#clinics" data-i18n="nav_clinics">Clinics</a>
         <a class="nav-link" data-view="guide" href="#guide" data-i18n="nav_guide">Guide</a>
         <a class="nav-link" data-view="login" href="#login" id="nav-login" data-i18n="nav_login">Login</a>
         <a class="nav-link" data-view="dashboard" href="#dashboard" id="nav-dashboard" style="display:none;" data-i18n="nav_dashboard">Dashboard</a>
@@ -30,7 +32,7 @@
 
       <div class="nav-right-mobile">
         <button type="button" class="lang-toggle" id="lang-toggle-mobile" onclick="toggleLang()">বাং</button>
-        <button type="button" class="hamburger" onclick="toggleMobileMenu()">
+        <button type="button" class="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -38,20 +40,21 @@
   </nav>
 
   <main>
+    <!-- HOME -->
     <section class="view active" id="view-home">
       <section class="hero">
         <div class="hero-bg"></div>
         <div class="hero-content">
-          <div class="hero-tag" data-i18n="hero_tag">🐾 Bangladesh's First Cat Blood Donor Network</div>
+          <div class="hero-tag" data-i18n="hero_tag">🐾 A cat blood donor network for Bangladesh</div>
           <h1 data-i18n="hero_title" data-i18n-html="true">Every Drop Counts.<br/>Save a Cat's Life Today.</h1>
-          <p class="hero-sub" data-i18n="hero_sub">Connect with verified cat blood donors across all 8 divisions. Fast search, emergency alerts, and a caring community.</p>
+          <p class="hero-sub" data-i18n="hero_sub">Find a vet clinic that lists blood transfusion, then connect with a donor cat nearby. Emergency alerts reach donors across your division.</p>
           <div class="hero-actions">
-            <a href="#search" class="btn btn-primary btn-lg" data-i18n="hero_cta1">Find a Donor</a>
+            <a href="#search" class="btn btn-primary btn-lg" data-i18n="hero_cta1">Find a Clinic &amp; Donor</a>
             <a href="#signup" class="btn btn-outline btn-lg" data-i18n="hero_cta2">Register Your Cat</a>
           </div>
           <div class="hero-trust">
             <span data-i18n="hero_trust1">Free Forever</span>
-            <span data-i18n="hero_trust2">All 8 Divisions</span>
+            <span data-i18n="hero_trust2">Clinic-first matching</span>
             <span data-i18n="hero_trust3">Instant Contact</span>
           </div>
         </div>
@@ -69,15 +72,15 @@
           </div>
           <div class="step-card">
             <div class="step-number">2</div>
-            <div class="step-icon">🔎</div>
-            <h3 data-i18n="step2_title">Search Donors</h3>
-            <p data-i18n="step2_desc">Filter by division, district, and blood type to find compatible donors near you.</p>
+            <div class="step-icon">🏥</div>
+            <h3 data-i18n="step2_title">Find a Clinic</h3>
+            <p data-i18n="step2_desc">A transfusion needs a vet with the right equipment. Find a listed clinic near you and call first.</p>
           </div>
           <div class="step-card">
             <div class="step-number">3</div>
             <div class="step-icon">📞</div>
-            <h3 data-i18n="step3_title">Contact Directly</h3>
-            <p data-i18n="step3_desc">Get the donor's phone number and call them directly. No middleman needed.</p>
+            <h3 data-i18n="step3_title">Match a Donor &amp; Meet at the Clinic</h3>
+            <p data-i18n="step3_desc">Contact a donor in your division and meet at the clinic. The vet screens and cross-matches.</p>
           </div>
         </div>
       </section>
@@ -86,15 +89,15 @@
         <div class="stats-bar">
           <div class="stat">
             <span class="stat-num" id="stat-donors">0</span>
-            <span class="stat-label" data-i18n="stat_donors">Registered Donors</span>
+            <span class="stat-label" data-i18n="stat_donors">Donor Cats</span>
           </div>
           <div class="stat">
-            <span class="stat-num">8</span>
-            <span class="stat-label" data-i18n="stat_divisions">Divisions Covered</span>
+            <span class="stat-num" id="stat-clinics">0</span>
+            <span class="stat-label" data-i18n="stat_clinics">Clinics Listed</span>
           </div>
           <div class="stat">
             <span class="stat-num" id="stat-alerts">0</span>
-            <span class="stat-label" data-i18n="stat_alerts">Lives Connected</span>
+            <span class="stat-label" data-i18n="stat_alerts">Alerts Sent</span>
           </div>
         </div>
       </section>
@@ -102,7 +105,7 @@
       <section class="section">
         <div class="mission-card">
           <h2 data-i18n="mission_title">Our Mission</h2>
-          <p data-i18n="mission_desc">Cat blood transfusions save lives — but finding a compatible donor in Bangladesh is nearly impossible. We're building the first nationwide registry so that no cat owner ever has to face that helpless moment alone.</p>
+          <p data-i18n="mission_desc">Cat blood transfusions save lives, but finding a compatible donor in Bangladesh is hard, and not every district has a clinic that can do the procedure. We're building a registry of donors and transfusion-capable clinics so that no cat owner faces that helpless moment alone.</p>
           <a href="#signup" class="btn btn-primary btn-lg" data-i18n="mission_cta">Join the Mission</a>
         </div>
       </section>
@@ -131,12 +134,12 @@
 
       <section class="section">
         <h2 class="section-title" data-i18n="eligible_title">Is My Cat Eligible?</h2>
-        <p class="section-subtitle" data-i18n="eligible_subtitle">Most donor cats share a few healthy traits</p>
+        <p class="section-subtitle" data-i18n="eligible_subtitle">Most donor cats share a few healthy traits. Your vet makes the final call.</p>
         <div class="guide-grid">
           <div class="guide-card type-a">
             <div class="guide-badge">✓</div>
             <h3 data-i18n="eligible_card1_title">Good Donor Traits</h3>
-            <p data-i18n="eligible_card1_text">Usually 1–8 years old, healthy, calm, and fully vaccinated.</p>
+            <p data-i18n="eligible_card1_text">Usually 1–8 years old, at least 4 kg, healthy, calm, and fully vaccinated.</p>
           </div>
           <div class="guide-card type-b">
             <div class="guide-badge">🧪</div>
@@ -152,26 +155,30 @@
       </section>
     </section>
 
+    <!-- SEARCH -->
     <section class="view" id="view-search">
       <section class="section">
-        <h2 class="section-title" data-i18n="search_title">Find a Blood Donor</h2>
-        <p class="section-subtitle" data-i18n="search_subtitle">Search by location and blood type — get phone numbers instantly</p>
+        <h2 class="section-title" data-i18n="search_title">Find a Clinic &amp; Donor</h2>
+        <p class="section-subtitle" data-i18n="search_subtitle">Transfusions happen at a vet clinic. Check clinics first, then contact donors nearby.</p>
+
+        <div class="notice" data-i18n="notice_call_first">Always call the clinic before you travel. Transfusion availability can change, and the vet must screen and cross-match the donor.</div>
+
         <form class="search-form" onsubmit="handleSearch(event)">
           <div class="form-row">
             <div class="form-group">
-              <label data-i18n="label_division">Division</label>
+              <label for="search-division" data-i18n="label_division">Division</label>
               <select id="search-division" onchange="updateDistricts()">
                 <option value="" data-i18n="opt_all_div">All Divisions</option>
               </select>
             </div>
             <div class="form-group">
-              <label data-i18n="label_district">District</label>
+              <label for="search-district" data-i18n="label_district">District</label>
               <select id="search-district">
                 <option value="" data-i18n="opt_all_dist">All Districts</option>
               </select>
             </div>
             <div class="form-group">
-              <label data-i18n="label_blood">Blood Type</label>
+              <label for="search-blood" data-i18n="label_blood">Blood Type</label>
               <select id="search-blood">
                 <option value="" data-i18n="opt_all_blood">All Types</option>
                 <option value="A">A</option>
@@ -183,21 +190,26 @@
           </div>
         </form>
 
+        <h3 class="step-heading" data-i18n="step_clinics">Step 1 — Clinics that list blood transfusion</h3>
+        <div id="clinic-note" class="notice notice-info" style="display:none;"></div>
+        <div id="search-clinics" class="clinic-grid"></div>
+        <div id="no-clinics" class="no-results" style="display:none;" data-i18n="no_clinics_at_all">No clinics listed yet.</div>
+
+        <h3 class="step-heading" data-i18n="step_donors">Step 2 — Donor cats</h3>
         <div class="results-header">
           <span data-i18n="available_donors">Available donors</span>
           <span id="result-count"></span>
         </div>
-
         <div id="search-results" class="donor-grid"></div>
         <div id="no-results" class="no-results" style="display:none;" data-i18n="no_results">No donors found. Try changing your filters.</div>
 
         <div class="alert-box">
           <h3 data-i18n="urgent_title">🚨 Need Blood Urgently?</h3>
-          <p data-i18n="urgent_sub">Send an alert to all donors in a district</p>
+          <p data-i18n="urgent_sub">Post an alert to donors in your division. Call a clinic first, because a donor can't help without one.</p>
           <form class="alert-form" onsubmit="sendEmergencyAlert(event)">
             <input id="alert-phone" type="tel" data-i18n="alert_phone_placeholder" placeholder="Your phone number" required>
-            <select id="alert-district" required>
-              <option value="" data-i18n="select_district">Select District</option>
+            <select id="alert-division" required>
+              <option value="" data-i18n="opt_select_div">Select Division</option>
             </select>
             <select id="alert-blood" required>
               <option value="" data-i18n="blood_type">Blood Type</option>
@@ -205,13 +217,55 @@
               <option value="B">B</option>
               <option value="AB">AB</option>
             </select>
-            <button type="submit" class="btn btn-danger pulse" data-i18n="alert_btn">Send Emergency Alert</button>
+            <button type="submit" class="btn btn-danger pulse" data-i18n="alert_btn">Post Emergency Alert</button>
           </form>
           <div id="alert-confirm" style="display:none; margin-top:16px;"></div>
         </div>
       </section>
     </section>
 
+    <!-- CLINICS -->
+    <section class="view" id="view-clinics">
+      <section class="section">
+        <h2 class="section-title" data-i18n="clinics_title">Transfusion Clinics</h2>
+        <p class="section-subtitle" data-i18n="clinics_subtitle">This list comes from the clinics' own websites. Unless a clinic is marked confirmed by phone, call to check before you go.</p>
+
+        <div class="form-row clinics-filter">
+          <div class="form-group">
+            <label for="clinics-division" data-i18n="label_division">Division</label>
+            <select id="clinics-division" onchange="renderClinicsView()">
+              <option value="" data-i18n="opt_all_div">All Divisions</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="clinics-list" class="clinic-grid"></div>
+        <div id="clinics-empty" class="no-results" style="display:none;" data-i18n="no_clinics_at_all">No clinics listed yet.</div>
+
+        <div class="alert-box">
+          <h3 data-i18n="suggest_title">Know a clinic that transfuses cats?</h3>
+          <p data-i18n="suggest_sub">Tell us and we'll verify it by phone before listing it.</p>
+          <form class="suggest-form" onsubmit="handleClinicSuggestion(event)">
+            <div class="form-row">
+              <input id="sug-name" data-i18n="sug_name_placeholder" placeholder="Clinic name" required>
+              <select id="sug-division" onchange="updateDistricts('sug-division','sug-district')" required>
+                <option value="" data-i18n="opt_select_div">Select Division</option>
+              </select>
+              <select id="sug-district" required>
+                <option value="" data-i18n="opt_select_dist">Select District</option>
+              </select>
+              <input id="sug-phone" type="tel" data-i18n="sug_phone_placeholder" placeholder="Clinic phone (if you have it)">
+            </div>
+            <div class="form-row form-row-2">
+              <input id="sug-note" data-i18n="sug_note_placeholder" placeholder="Anything else we should know? (optional)">
+              <button type="submit" class="btn btn-primary" data-i18n="btn_suggest">Suggest clinic</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </section>
+
+    <!-- GUIDE -->
     <section class="view" id="view-guide">
       <section class="section">
         <h2 class="section-title" data-i18n="guide_title">Cat Blood Type Guide</h2>
@@ -254,6 +308,7 @@
       </section>
     </section>
 
+    <!-- LOGIN -->
     <section class="view" id="view-login">
       <div class="auth-wrapper">
         <div class="auth-card">
@@ -261,11 +316,11 @@
           <p class="auth-sub" data-i18n="login_sub">Log in to manage your donor profile</p>
           <form onsubmit="handleLogin(event)">
             <div class="form-group">
-              <label data-i18n="label_email">Email</label>
+              <label for="login-email" data-i18n="label_email">Email</label>
               <input id="login-email" type="email" data-i18n="login_email_placeholder" placeholder="Email" required>
             </div>
             <div class="form-group">
-              <label data-i18n="label_password">Password</label>
+              <label for="login-password" data-i18n="label_password">Password</label>
               <input id="login-password" type="password" data-i18n="login_password_placeholder" placeholder="Password" required>
             </div>
             <button type="submit" class="btn btn-primary btn-full" data-i18n="btn_login">Login</button>
@@ -278,6 +333,7 @@
       </div>
     </section>
 
+    <!-- SIGNUP -->
     <section class="view" id="view-signup">
       <div class="auth-wrapper">
         <div class="auth-card">
@@ -285,33 +341,34 @@
           <p class="auth-sub" data-i18n="signup_sub">Join the network and register your cat</p>
           <form onsubmit="handleSignup(event)">
             <div class="form-group">
-              <label data-i18n="label_name">Full Name</label>
+              <label for="signup-name" data-i18n="label_name">Full Name</label>
               <input id="signup-name" type="text" data-i18n="signup_name_placeholder" placeholder="Full Name" required>
             </div>
             <div class="form-group">
-              <label data-i18n="label_email">Email</label>
+              <label for="signup-email" data-i18n="label_email">Email</label>
               <input id="signup-email" type="email" data-i18n="signup_email_placeholder" placeholder="Email" required>
             </div>
             <div class="form-group">
-              <label data-i18n="label_password">Password</label>
+              <label for="signup-password" data-i18n="label_password">Password</label>
               <input id="signup-password" type="password" data-i18n="signup_password_placeholder" placeholder="Password" required>
             </div>
             <div class="form-group">
-              <label data-i18n="label_phone">Phone Number</label>
+              <label for="signup-phone" data-i18n="label_phone">Phone Number</label>
               <input id="signup-phone" type="tel" data-i18n="signup_phone_placeholder" placeholder="Phone Number" required>
             </div>
             <div class="form-group">
-              <label data-i18n="label_division">Division</label>
+              <label for="signup-division" data-i18n="label_division">Division</label>
               <select id="signup-division" onchange="updateDistricts('signup-division','signup-district')" required>
                 <option value="" data-i18n="opt_select_div">Select Division</option>
               </select>
             </div>
             <div class="form-group">
-              <label data-i18n="label_district">District</label>
+              <label for="signup-district" data-i18n="label_district">District</label>
               <select id="signup-district" required>
                 <option value="" data-i18n="opt_select_dist">Select District</option>
               </select>
             </div>
+            <p class="privacy-note" data-i18n="privacy_note">Your phone number is shown to people searching for a donor cat. Only sign up if you're happy with that.</p>
             <button type="submit" class="btn btn-primary btn-full" data-i18n="btn_signup">Create Account</button>
           </form>
           <div class="auth-switch">
@@ -322,11 +379,12 @@
       </div>
     </section>
 
+    <!-- DASHBOARD -->
     <section class="view" id="view-dashboard">
       <section class="section">
         <div class="dash-header">
           <h2 class="section-title" data-i18n="dash_title">Dashboard</h2>
-          <p class="section-subtitle" id="dash-welcome" data-i18n="dash_welcome">Welcome</p>
+          <p class="section-subtitle" id="dash-welcome">Welcome</p>
         </div>
         <div class="dash-panel">
           <div class="dash-panel-header">
@@ -337,8 +395,8 @@
             <div class="form-row">
               <input id="cat-name" data-i18n="cat_name_placeholder" placeholder="Cat Name" required>
               <input id="cat-breed" data-i18n="cat_breed_placeholder" placeholder="Breed">
-              <input id="cat-age" type="number" data-i18n="cat_age_placeholder" placeholder="Age" required>
-              <input id="cat-weight" type="number" step="0.1" data-i18n="cat_weight_placeholder" placeholder="Weight" required>
+              <input id="cat-age" type="number" min="1" max="8" step="1" data-i18n="cat_age_placeholder" placeholder="Age (years)" required>
+              <input id="cat-weight" type="number" min="4" step="0.1" data-i18n="cat_weight_placeholder" placeholder="Weight (kg)" required>
             </div>
             <div class="form-row">
               <select id="cat-division" onchange="updateCatDistricts()" required>
@@ -355,6 +413,10 @@
               </select>
               <button type="submit" class="btn btn-primary" data-i18n="btn_save">Save</button>
             </div>
+            <div class="check-row">
+              <input id="cat-travel" type="checkbox">
+              <label for="cat-travel" data-i18n="cat_travel">Willing to travel to other districts in my division</label>
+            </div>
           </form>
           <div id="cat-list" class="donor-grid"></div>
           <div id="no-cats" class="no-results" data-i18n="dash_nocats">You haven't registered any cats yet.</div>
@@ -362,7 +424,7 @@
 
         <div class="dash-panel">
           <div class="dash-panel-header">
-            <h3 data-i18n="dash_history">Emergency Alerts</h3>
+            <h3 data-i18n="dash_history">Emergency Alerts in Your Division</h3>
           </div>
           <div id="dash-alerts" class="alert-list"></div>
           <div id="no-alerts" class="no-results" data-i18n="dash_noalerts">No emergency alerts yet.</div>
